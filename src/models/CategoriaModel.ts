@@ -1,20 +1,26 @@
-// import { DataTypes } from "sequelize";
-// import { sequelize } from "../infra/database";
+import { DataTypes, Model, Sequelize } from "sequelize";
 
-// const CategoriaModel = sequelize.define(
-//   "CATEGORIA_TB",
-//   {
-//     categoriaId: {
-//       type: DataTypes.INTEGER,
-//       primaryKey: true,
-//       autoIncrement: true,
-//     },
-//     categoria: {
-//       type: DataTypes.STRING,
-//       unique: true,
-//     },
-//   },
-//   { freezeTableName: true }
-// );
+async function getCategoriaModel(sequelize: Sequelize) {
+  class CategoriaModel extends Model {
+    declare categoriaId?: number;
+    declare categoria: string;
+  }
+  CategoriaModel.init(
+    {
+      categoriaId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: true,
+      },
+      categoria: {
+        type: DataTypes.STRING,
+      },
+    },
+    { sequelize, tableName: "CATEGORIA_TB" }
+  );
 
-// export default CategoriaModel;
+  return CategoriaModel;
+}
+
+export default getCategoriaModel;

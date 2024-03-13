@@ -1,8 +1,10 @@
 import { Sequelize } from "sequelize";
 
-export class Conexao {
+class Conexao {
   sequelize: Sequelize;
+  static numero = 0;
   constructor() {
+    Conexao.numero++;
     const { database, username, password, host } = {
       database: `${process.env.DB_DATABASE}`,
       username: `${process.env.DB_USERNAME}`,
@@ -14,16 +16,19 @@ export class Conexao {
       host: host,
       schema: process.env.DB_SCHEMA,
     });
+    console.log(`Conexão[${Conexao.numero}] aberta!`);
   }
 
   async close() {
     await this.sequelize
       .close()
       .then(() => {
-        console.log("conexao fechada!!");
+        console.log(`Conexão[${Conexao.numero}] fechada!`);
       })
       .catch((err: any) => {
         console.log("error: ", JSON.stringify(err));
       });
   }
 }
+
+export default Conexao;
