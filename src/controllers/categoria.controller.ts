@@ -5,16 +5,12 @@ import getCategoriaModel from "../models/CategoriaModel";
 export const CategoriaController = {
   async get(req: Request, res: Response) {
     const conn = new Conexao();
-    const categoriaModel = await getCategoriaModel(conn.sequelize);
-
     try {
+      const categoriaModel = await getCategoriaModel(conn.sequelize);
       const result = await categoriaModel.findAll();
-
-      const mapResult = result.map((item) => item);
-
-      return res.send(mapResult);
+      return res.send(result);
     } catch (error: any) {
-      res.send({ message: error.message });
+      return res.send({ message: error.message });
     } finally {
       try {
         await conn.close();
@@ -23,5 +19,15 @@ export const CategoriaController = {
       }
     }
   },
-  async post(req: Request, res: Response) {},
+  async post(req: Request, res: Response) {
+    const conn = new Conexao();
+    try {
+      const { categoria } = req.body;
+      const categoriaModel = await getCategoriaModel(conn.sequelize);
+      const categoriaCreated = await categoriaModel.create({ categoria });
+      return res.status(201).send(categoriaCreated);
+    } catch (error: any) {
+      return res.status(500).send({ message: error.message });
+    }
+  },
 };
