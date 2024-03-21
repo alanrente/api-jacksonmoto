@@ -1,6 +1,4 @@
 import { Request, Response } from "express";
-import conexao from "../infra/database";
-import getCategoriaModel from "../models/CategoriaModel";
 import { CategoriaService } from "../services/categoria.service";
 
 const sendBodyFormatter = (body: any, type: "msg" | "body" = "msg") => {
@@ -40,19 +38,24 @@ export const CategoriaController = {
   async create(req: Request, res: Response) {
     try {
       const { categoria } = req.body;
-      const conn = await conexao();
-      const categoriaModel = await getCategoriaModel(conn);
-      const categoriaCreated = await categoriaModel.create({ categoria });
-      conn.close();
-      return res.status(201).send(sendBodyFormatter(categoriaCreated));
+      const categoriaCreated = await new CategoriaService().create(categoria);
+      return res.status(201).send(sendBodyFormatter(categoriaCreated, "body"));
     } catch (error: any) {
       console.log(error);
       return res.status(500).send(sendBodyFormatter(error.message));
     }
   },
   async update(req: Request, res: Response) {
-    const { categoriaId } = req.params as { categoriaId: string };
-    console.log(categoriaId);
-    res.send(sendBodyFormatter("rota put chamada"));
+    try {
+      const { categoriaId } = req.params as { categoriaId: string };
+      const { categoria } = req.body;
+      const categoriaUpdated = await new CategoriaService().update(
+        +categoriaId,
+        categoria
+      );
+      res.send(sendBodyFormatter(categoriaUpdated, "body"));
+    } catch (error) {
+      res.status(500).send(sendBodyFormatter(error));
+    }
   },
 };

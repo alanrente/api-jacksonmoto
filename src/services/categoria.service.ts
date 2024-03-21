@@ -1,6 +1,6 @@
 import conexao from "../infra/database";
 import { Sequelize } from "sequelize";
-import getCategoriaModel from "../models/CategoriaModel";
+import CategoriaModel from "../models/CategoriaModel";
 
 export class CategoriaService {
   private conection: Sequelize;
@@ -10,16 +10,41 @@ export class CategoriaService {
   }
 
   async getAll() {
-    const categoriaModel = await getCategoriaModel(this.conection);
-    const categorias = await categoriaModel.findAll();
+    const categorias = await CategoriaModel.findAll({
+      attributes: { exclude: ["createdAt", "updatedAt"] },
+    });
     await this.conection.close();
     return categorias;
   }
 
   async getOne(categoriaId: number) {
-    const categoriaModel = await getCategoriaModel(this.conection);
-    const categoria = await categoriaModel.findOne({ where: { categoriaId } });
+    const categoria = await CategoriaModel.findOne({
+      where: { categoriaId },
+      attributes: { exclude: ["createdAt", "updatedAt"] },
+    });
     await this.conection.close();
     return categoria;
+  }
+
+  async create(categoria: string) {
+    if (!categoria) {
+      throw new Error("Categoria inválida!");
+    }
+    const categoriaCreated = await CategoriaModel.create({
+      categoria: categoria,
+    });
+    await this.conection.close();
+    return categoriaCreated;
+  }
+
+  async update(categoriaId: number, novaCategoria: string) {
+    const categoria = await this.getOne(categoriaId);
+    if (!categoria) {
+      throw new Error(`categoria ${categoriaId} não encontrada`);
+    }
+
+    categoria.categoria = novaCategoria;
+    const categoriaUpdated = await categoria.save();
+    return categoriaUpdated;
   }
 }
