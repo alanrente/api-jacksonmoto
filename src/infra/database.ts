@@ -7,16 +7,14 @@ const { database, username, password, host } = {
   host: `${process.env.DB_HOST}`,
 };
 
-export default async () => {
+export default () => {
   try {
     const sequelize = new Sequelize(database, username, password, {
       dialect: "postgres",
       host: host,
       schema: process.env.DB_SCHEMA,
     });
-    await sequelize.authenticate().then(() => {
-      console.log("banco conectado!");
-    });
+    console.log("banco conectado!");
     return sequelize;
   } catch (err: any) {
     throw new Error(err.message);
