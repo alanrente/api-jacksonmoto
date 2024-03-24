@@ -13,6 +13,7 @@ export default () => {
       dialect: "postgres",
       host: host,
       schema: process.env.DB_SCHEMA,
+      timezone: "-03:00",
     });
     console.log("banco conectado!");
     return sequelize;

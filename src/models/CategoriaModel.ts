@@ -1,30 +1,31 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
-import database from "../infra/database";
-
-class CategoriaModel extends Model {
+// import database from "../infra/database";
+export class CategoriaModel extends Model {
   declare categoriaId?: number;
   declare categoria: string;
 }
 
-CategoriaModel.init(
-  {
-    categoriaId: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: true,
+export const getCategoriaModel = (conexao: Sequelize) => {
+  CategoriaModel.init(
+    {
+      categoriaId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: true,
+      },
+      categoria: {
+        type: DataTypes.STRING,
+      },
     },
-    categoria: {
-      type: DataTypes.STRING,
-    },
-  },
-  {
-    sequelize: database(),
-    tableName: "CATEGORIA_TB",
-    defaultScope: {
-      order: ["categoriaId"],
-    },
-  }
-);
+    {
+      sequelize: conexao,
+      tableName: "CATEGORIA_TB",
+      defaultScope: {
+        order: ["categoriaId"],
+      },
+    }
+  );
 
-export default CategoriaModel;
+  return CategoriaModel;
+};
