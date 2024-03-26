@@ -2,8 +2,9 @@ import { DataTypes } from "sequelize";
 import database from "../infra/database";
 import { ServicoModel } from "./ServicoModel";
 import { OrdemServicoModel } from "./OrdemServicoModel";
+import { IOsServicos } from "../interfaces/Models.interface";
 
-const OS_ServicosModel = database().define(
+const OS_ServicosModel = database().define<IOsServicos>(
   "OS_ServicosModel",
   {
     ServicoId: {

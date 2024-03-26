@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import database from "../infra/database";
-import { OrdemServicoModel } from "./OrdemServicoModel";
 const sequelize = database();
 
 const ServicoModel = sequelize.define(

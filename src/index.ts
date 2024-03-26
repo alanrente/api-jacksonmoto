@@ -1,5 +1,5 @@
-import { config } from "dotenv";
-config();
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import cors from "cors";
 import routes from "./routes";
@@ -20,6 +20,7 @@ app.get("/", (req, res) => {
 app.use("/api", routes);
 
 const port = process.env.port;
+const alter = process.env.ALTER === "true";
 
 app.listen(port, async () => {
   const models = {
@@ -31,7 +32,7 @@ app.listen(port, async () => {
   };
 
   Object.values(models).forEach((model) => {
-    model.sync();
+    model.sync({ alter: Boolean(alter) });
   });
 
   console.debug(`http://localhost:${port}`);

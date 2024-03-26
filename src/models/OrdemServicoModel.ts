@@ -1,8 +1,9 @@
 import { DataTypes } from "sequelize";
 import database from "../infra/database";
+import { IOrdemServico } from "../interfaces/Models.interface";
 const sequelize = database();
 
-const OrdemServicoModel = sequelize.define(
+const OrdemServicoModel = sequelize.define<IOrdemServico>(
   "OrdemServicoModel",
   {
     idOrdemServico: {
@@ -16,10 +17,6 @@ const OrdemServicoModel = sequelize.define(
       defaultValue: DataTypes.NOW,
     },
     mecanicoId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    servicoId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

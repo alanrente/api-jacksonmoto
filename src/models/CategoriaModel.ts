@@ -7,19 +7,10 @@ import {
   Sequelize,
 } from "sequelize";
 import database from "../infra/database";
+import { ICategoriaModel } from "../interfaces/Models.interface";
 const sequelize = database();
 
-interface CategoriaModel
-  extends Model<
-    InferAttributes<CategoriaModel>,
-    InferCreationAttributes<CategoriaModel>
-  > {
-  // Some fields are optional when calling UserModel.create() or UserModel.build()
-  categoriaId?: CreationOptional<number>;
-  categoria: string;
-}
-
-export const CategoriaModel = sequelize.define<CategoriaModel>(
+export const CategoriaModel = sequelize.define<ICategoriaModel>(
   "CategoriaModel",
   {
     categoriaId: {

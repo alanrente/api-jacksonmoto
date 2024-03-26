@@ -1,13 +1,12 @@
 import conexao from "../infra/database";
-import { Sequelize } from "sequelize";
 import { ServicoModel } from "../models/ServicoModel";
+import { Conection } from "../interfaces/Conection.interface";
 
-export class ServicoService {
-  private conection: Sequelize;
+export class ServicoService extends Conection {
   private servicoModel: typeof ServicoModel;
 
   constructor() {
-    this.conection = conexao();
+    super(conexao());
     this.servicoModel = ServicoModel;
   }
 
@@ -17,11 +16,5 @@ export class ServicoService {
     });
     await this.closeConection();
     return categorias;
-  }
-
-  private async closeConection() {
-    await this.conection.close().then(() => {
-      console.log("banco desconectado");
-    });
   }
 }

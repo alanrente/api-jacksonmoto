@@ -1,11 +1,13 @@
 import { Router } from "express";
 import homeRouter from "./home.router";
 import categoriaRouter from "./categoria.router";
+import ordemServicoRouter from "./ordemServico.router";
 
 const routes = Router();
 
 routes.use("/home", homeRouter);
 routes.use("/categorias", categoriaRouter);
+routes.use("/ordem-servicos", ordemServicoRouter);
 
 function print(path: any, layer: any) {
   if (layer.route) {

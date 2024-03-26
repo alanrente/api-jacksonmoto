@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { HomeController } from "../controllers/home.controller";
 import { ServicoService } from "../services/servico.service";
+import { OrdemServicoService } from "../services/ordemServicoService.service";
 
 const homeRouter = Router();
 
