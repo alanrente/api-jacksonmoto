@@ -42,6 +42,10 @@ function split(thing: any) {
   }
 }
 
-routes.stack.forEach(print.bind(null, []));
+function mapperRouters() {
+  routes.stack.forEach(print.bind(null, []));
+}
+
+mapperRouters();
 
 export default routes;

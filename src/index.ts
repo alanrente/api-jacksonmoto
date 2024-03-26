@@ -5,9 +5,9 @@ import cors from "cors";
 import routes from "./routes";
 import database from "./infra/database";
 import { ServicoModel } from "./models/ServicoModel";
-import { getMecanicoModel } from "./models/MecanicoModel";
-import { getOrdemServicoModel } from "./models/OrdemServicoModel";
-import { getCategoriaModel } from "./models/CategoriaModel";
+import { MecanicoModel } from "./models/MecanicoModel";
+import { OrdemServicoModel } from "./models/OrdemServicoModel";
+import { CategoriaModel } from "./models/CategoriaModel";
 const app = express();
 
 app.use(cors());
@@ -25,9 +25,9 @@ app.listen(port, async () => {
   const conexao = database();
   const models = {
     servicoModel: ServicoModel,
-    mecanicoModel: getMecanicoModel(conexao),
-    ordemServicoModel: getOrdemServicoModel(conexao),
-    categoriaModel: getCategoriaModel(conexao),
+    mecanicoModel: MecanicoModel,
+    ordemServicoModel: OrdemServicoModel,
+    categoriaModel: CategoriaModel,
   };
 
   Object.values(models).forEach((model) => {

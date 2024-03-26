@@ -1,6 +1,6 @@
 import conexao from "../infra/database";
 import { Sequelize } from "sequelize";
-import { CategoriaModel, getCategoriaModel } from "../models/CategoriaModel";
+import { CategoriaModel } from "../models/CategoriaModel";
 
 export class CategoriaService {
   private conection: Sequelize;
@@ -8,7 +8,7 @@ export class CategoriaService {
 
   constructor() {
     this.conection = conexao();
-    this.categoriaModel = getCategoriaModel(this.conection);
+    this.categoriaModel = CategoriaModel;
   }
 
   async getAll() {

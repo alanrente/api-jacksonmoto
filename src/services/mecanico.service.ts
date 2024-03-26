@@ -1,14 +1,14 @@
 import conexao from "../infra/database";
 import { Sequelize } from "sequelize";
-import { CategoriaModel, getCategoriaModel } from "../models/CategoriaModel";
+import { CategoriaModel } from "../models/CategoriaModel";
 
-export class CategoriaService {
+export class MecanicoService {
   private conection: Sequelize;
   private categoriaModel: typeof CategoriaModel;
 
   constructor() {
     this.conection = conexao();
-    this.categoriaModel = getCategoriaModel(this.conection);
+    this.categoriaModel = CategoriaModel;
   }
 
   async getAll() {

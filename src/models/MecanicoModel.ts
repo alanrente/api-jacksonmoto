@@ -1,31 +1,24 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import { DataTypes } from "sequelize";
+import database from "../infra/database";
+const sequelize = database();
 
-export class MecanicoModel extends Model {
-  declare idMecanico?: number;
-  declare nome: string;
-}
-
-export const getMecanicoModel = (conexao: Sequelize) => {
-  MecanicoModel.init(
-    {
-      idMecanico: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: true,
-      },
-      nome: {
-        type: DataTypes.STRING,
-      },
+export const MecanicoModel = sequelize.define(
+  "MecanicoModel",
+  {
+    idMecanico: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: true,
     },
-    {
-      sequelize: conexao,
-      tableName: "MECANICO_TB",
-      defaultScope: {
-        order: ["idMecanico"],
-      },
-    }
-  );
-
-  return MecanicoModel;
-};
+    nome: {
+      type: DataTypes.STRING,
+    },
+  },
+  {
+    tableName: "MECANICO_TB",
+    defaultScope: {
+      order: ["idMecanico"],
+    },
+  }
+);
