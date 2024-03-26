@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import database from "../infra/database";
 const sequelize = database();
 
-export const OrdemServicoModel = sequelize.define(
+const OrdemServicoModel = sequelize.define(
   "OrdemServicoModel",
   {
     idOrdemServico: {
@@ -31,3 +31,5 @@ export const OrdemServicoModel = sequelize.define(
     },
   }
 );
+
+export { OrdemServicoModel };

@@ -3,11 +3,11 @@ config();
 import express from "express";
 import cors from "cors";
 import routes from "./routes";
-import database from "./infra/database";
 import { ServicoModel } from "./models/ServicoModel";
 import { MecanicoModel } from "./models/MecanicoModel";
 import { OrdemServicoModel } from "./models/OrdemServicoModel";
 import { CategoriaModel } from "./models/CategoriaModel";
+import { OS_ServicosModel } from "./models/OS_ServicosModel";
 const app = express();
 
 app.use(cors());
@@ -22,12 +22,12 @@ app.use("/api", routes);
 const port = process.env.port;
 
 app.listen(port, async () => {
-  const conexao = database();
   const models = {
     servicoModel: ServicoModel,
     mecanicoModel: MecanicoModel,
     ordemServicoModel: OrdemServicoModel,
     categoriaModel: CategoriaModel,
+    osServicosModel: OS_ServicosModel,
   };
 
   Object.values(models).forEach((model) => {

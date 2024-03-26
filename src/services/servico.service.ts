@@ -18,6 +18,7 @@ export class ServicoService {
     await this.closeConection();
     return categorias;
   }
+
   private async closeConection() {
     await this.conection.close().then(() => {
       console.log("banco desconectado");
