@@ -23,16 +23,16 @@ const port = process.env.port;
 const alter = process.env.ALTER === "true";
 
 app.listen(port, async () => {
-  const models = {
-    servicoModel: ServicoModel,
-    mecanicoModel: MecanicoModel,
-    ordemServicoModel: OrdemServicoModel,
-    categoriaModel: CategoriaModel,
-    osServicosModel: OS_ServicosModel,
-  };
+  const models = [
+    ServicoModel,
+    MecanicoModel,
+    OrdemServicoModel,
+    CategoriaModel,
+    OS_ServicosModel,
+  ];
 
-  Object.values(models).forEach((model) => {
-    model.sync({ alter: Boolean(alter) });
+  models.forEach((model) => {
+    model.sync();
   });
 
   console.debug(`http://localhost:${port}`);

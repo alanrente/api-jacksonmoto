@@ -1,9 +1,10 @@
 import { DataTypes } from "sequelize";
 import database from "../infra/database";
+import { IServicoModel } from "../interfaces/Models.interface";
 const sequelize = database();
 
-const ServicoModel = sequelize.define(
-  "ServicoModel",
+const ServicoModel = sequelize.define<IServicoModel>(
+  "servicos",
   {
     idServico: {
       type: DataTypes.INTEGER,

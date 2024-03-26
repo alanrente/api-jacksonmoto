@@ -33,3 +33,13 @@ export interface IOsServicos
   ServicoId: number;
   OrdemServicoId: number;
 }
+
+export interface IServicoModel
+  extends Model<
+    InferAttributes<IServicoModel>,
+    InferCreationAttributes<IServicoModel>
+  > {
+  idServico: CreationOptional<number>;
+  servico: string;
+  valor: number;
+}

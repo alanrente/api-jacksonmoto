@@ -4,25 +4,36 @@ import { ServicoModel } from "./ServicoModel";
 import { OrdemServicoModel } from "./OrdemServicoModel";
 import { IOsServicos } from "../interfaces/Models.interface";
 
-const OS_ServicosModel = database().define<IOsServicos>(
-  "OS_ServicosModel",
+const OsServicosModel = database().define<IOsServicos>(
+  "OsServicosModel",
   {
     ServicoId: {
       type: DataTypes.INTEGER,
-      references: {
-        model: ServicoModel,
-        key: ServicoModel.primaryKeyAttribute,
-      },
+      field: "servico_id",
     },
     OrdemServicoId: {
       type: DataTypes.INTEGER,
-      references: {
-        model: OrdemServicoModel,
-        key: OrdemServicoModel.primaryKeyAttribute,
-      },
+      field: "ordem_servico_id",
     },
   },
-  { tableName: "OS_SERVICOS" }
+  { tableName: "OS_SERVICOS_TB", freezeTableName: true }
 );
 
-export { OS_ServicosModel };
+ServicoModel.belongsToMany(OrdemServicoModel, {
+  through: OsServicosModel,
+  foreignKey: OsServicosModel.getAttributes().ServicoId,
+});
+
+OrdemServicoModel.belongsToMany(ServicoModel, {
+  through: OsServicosModel,
+  foreignKey: OsServicosModel.getAttributes().OrdemServicoId,
+});
+
+// OsServicosModel.hasMany(OrdemServicoModel, {
+//   foreignKey: OrdemServicoModel.getAttributes().idOrdemServico,
+// });
+// OsServicosModel.hasMany(ServicoModel, {
+//   foreignKey: ServicoModel.getAttributes().idServico,
+// });
+
+export { OsServicosModel as OS_ServicosModel };

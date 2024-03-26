@@ -1,10 +1,12 @@
 import { DataTypes } from "sequelize";
 import database from "../infra/database";
 import { IOrdemServico } from "../interfaces/Models.interface";
+import { OS_ServicosModel } from "./OS_ServicosModel";
+import { ServicoModel } from "./ServicoModel";
 const sequelize = database();
 
 const OrdemServicoModel = sequelize.define<IOrdemServico>(
-  "OrdemServicoModel",
+  "ordemServico",
   {
     idOrdemServico: {
       type: DataTypes.INTEGER,

@@ -5,6 +5,7 @@ import { MecanicoModel } from "../models/MecanicoModel";
 import { OS_ServicosModel } from "../models/OS_ServicosModel";
 import { OrdemServicoModel } from "../models/OrdemServicoModel";
 import { IOsServicoPost } from "../interfaces/OrdemServicoRequest.interface";
+import { ServicoModel } from "../models/ServicoModel";
 
 export class OrdemServicoService extends Conection {
   private ordemServicoModel: typeof OrdemServicoModel;
@@ -20,7 +21,16 @@ export class OrdemServicoService extends Conection {
 
   async getAll() {
     const categorias = await this.ordemServicoModel.findAll({
-      attributes: { exclude: ["createdAt", "updatedAt"] },
+      include: {
+        model: ServicoModel,
+        attributes: {
+          include: [
+            `${ServicoModel.getAttributes().servico.field}`,
+            `${ServicoModel.getAttributes().valor.field}`,
+          ],
+        },
+        as: "servicos",
+      },
     });
     await this.closeConection();
     return categorias;
