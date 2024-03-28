@@ -10,7 +10,7 @@ import {
   IServico,
 } from "../interfaces/OrdemServico.interface";
 import { ServicoModel } from "../models/ServicoModel";
-import { InferAttributes, WhereOptions } from "sequelize";
+import { InferAttributes, Transaction, WhereOptions } from "sequelize";
 import { IOrdemServico } from "../interfaces/Models.interface";
 
 export class OrdemServicoService extends Conection {
@@ -18,7 +18,7 @@ export class OrdemServicoService extends Conection {
     super(conexao());
   }
 
-  private mapperGetAll(ordemServico: any[]): IOSMapper[] {
+  private mapperGetAll(ordemServico: any[]) {
     return ordemServico.map((os) => {
       const retorno = {} as IOSMapper;
       retorno.idOrdemServico = os.idOrdemServico;
@@ -30,10 +30,13 @@ export class OrdemServicoService extends Conection {
         servico: servico.servico,
         valor: servico.valor,
       }));
-      retorno.totalOS = os.servicos.reduce(
-        (servA: IServico, servB: IServico) =>
-          Number(servA.valor) + Number(servB.valor)
-      );
+      retorno.totalOS =
+        os.servicos.length > 1
+          ? os.servicos.reduce(
+              (servA: IServico, servB: IServico) =>
+                Number(servA.valor) + Number(servB.valor)
+            )
+          : os.servicos[0].valor;
       retorno.totalMecanico = retorno.totalOS / 2;
       return retorno;
     });
@@ -45,13 +48,9 @@ export class OrdemServicoService extends Conection {
 
     const ordensServicos = await OrdemServicoModel.findAll({
       where: condition,
-      attributes: { exclude: ["createdAt", "updatedAt", "mecanicoId"] },
       include: [
         {
           model: MecanicoModel,
-          attributes: {
-            exclude: ["createdAt", "updatedAt"],
-          },
           required: true,
         },
         {
@@ -61,14 +60,13 @@ export class OrdemServicoService extends Conection {
               `${ServicoModel.getAttributes().servico.field}`,
               `${ServicoModel.getAttributes().valor.field}`,
             ],
-            exclude: ["createdAt", "updatedAt"],
           },
           required: true,
         },
       ],
     });
     await this.closeConection();
-    return this.mapperGetAll(ordensServicos);
+    return await this.mapperGetAll(ordensServicos);
   }
 
   async create({
@@ -91,38 +89,56 @@ export class OrdemServicoService extends Conection {
         findOrCreateMecanicoByName[0].idMecanico;
 
       const servicosIds: number[] = [];
-      for await (const servico of servicos) {
-        const findOrCreateServicoByName = await ServicoModel.findCreateFind({
-          where: { servico: servico.servico, valor: servico.valor },
+      for await (const { servico, valor } of servicos) {
+        let servicoToInclude = null;
+        servicoToInclude = await ServicoModel.findOne({
+          where: { servico },
           transaction: transacao,
         });
 
-        servicosIds.push(findOrCreateServicoByName[0].dataValues.idServico);
+        if (!servicoToInclude) {
+          servicoToInclude = await ServicoModel.create(
+            { servico, valor: Number(valor) },
+            { transaction: transacao }
+          );
+        }
+
+        servicosIds.push(servicoToInclude.idServico);
       }
       idsMecanicoAndServicos.servicosId = servicosIds;
       console.log("idsMecanicoAndServicos", idsMecanicoAndServicos);
-      await transacao.commit();
 
-      return await this.createOSServico(idsMecanicoAndServicos);
+      return await this.createOSServico({
+        iOsServicoPost: idsMecanicoAndServicos,
+        transaction: transacao,
+      });
     } catch (error: any) {
       await transacao.rollback();
       throw new Error(error.message);
     }
   }
 
-  private async createOSServico({ mecanicoId, servicosId }: IOsServicoPost) {
-    const transacao = await this.conection.transaction();
+  private async createOSServico({
+    iOsServicoPost,
+    transaction,
+  }: {
+    iOsServicoPost: IOsServicoPost;
+    transaction?: Transaction;
+  }) {
+    const transacao = transaction
+      ? transaction
+      : await this.conection.transaction();
     try {
-      const dataExecucao = moment().format("YYYY-MM-27");
+      const dataExecucao = moment().format("YYYY-MM-25");
       const ordemServicoCriada = await OrdemServicoModel.create(
         {
           dataExecucao,
-          mecanicoId,
+          mecanicoId: iOsServicoPost.mecanicoId,
         },
         { transaction: transacao }
       );
 
-      for await (let id of servicosId) {
+      for await (let id of iOsServicoPost.servicosId) {
         await OsServicosModel.create(
           {
             OrdemServicoId: ordemServicoCriada.idOrdemServico,
