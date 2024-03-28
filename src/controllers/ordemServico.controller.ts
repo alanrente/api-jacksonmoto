@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import sendBodyFormatter from "../utils/sendBodyFormatter";
 import { OrdemServicoService } from "../services/ordemServicoService.service";
-import { IOsServicoPost } from "../interfaces/OrdemServicoRequest.interface";
+import {
+  IOsServicoPost,
+  IServico,
+} from "../interfaces/OrdemServicoRequest.interface";
 
 export const OrdemServicoController = {
   async getAll(req: Request, res: Response) {
@@ -30,7 +33,7 @@ export const OrdemServicoController = {
   async createWithoutServicosAndMecanico(req: Request, res: Response) {
     try {
       console.log(req.body);
-      const body = req.body as { servicos: string[]; mecanico: string };
+      const body = req.body as { servicos: IServico[]; mecanico: string };
       const result =
         await new OrdemServicoService().createOSWithoutServicosAndMecanico(
           body

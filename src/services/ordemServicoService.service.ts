@@ -4,7 +4,10 @@ import { Conection } from "../interfaces/Conection.interface";
 import { MecanicoModel } from "../models/MecanicoModel";
 import { OsServicosModel } from "../models/OSServicosModel";
 import { OrdemServicoModel } from "../models/OrdemServicoModel";
-import { IOsServicoPost } from "../interfaces/OrdemServicoRequest.interface";
+import {
+  IOsServicoPost,
+  IServico,
+} from "../interfaces/OrdemServicoRequest.interface";
 import { ServicoModel } from "../models/ServicoModel";
 
 export class OrdemServicoService extends Conection {
@@ -45,9 +48,8 @@ export class OrdemServicoService extends Conection {
     servicos,
   }: {
     mecanico: string;
-    servicos: string[];
+    servicos: IServico[];
   }) {
-    // TODO: passar o servico completo com servico e preço para criar corretamente um serviço que não exista na base
     const transacao = await this.conection.transaction();
     try {
       const idsMecanicoAndServicos = {} as IOsServicoPost;
@@ -63,7 +65,7 @@ export class OrdemServicoService extends Conection {
       const servicosIds: number[] = [];
       for await (const servico of servicos) {
         const findOrCreateServicoByName = await ServicoModel.findCreateFind({
-          where: { servico: servico },
+          where: { servico: servico.servico, valor: servico.valor },
           transaction: transacao,
         });
 
