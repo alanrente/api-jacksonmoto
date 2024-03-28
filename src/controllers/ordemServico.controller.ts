@@ -8,22 +8,27 @@ export const OrdemServicoController = {
     try {
       const { mecanicoId } = req.query as { mecanicoId: string };
       const result = await new OrdemServicoService().getAll(+mecanicoId);
+
+      if (result.ordensServicos.length == 0)
+        return res
+          .status(404)
+          .send(sendBodyFormatter("nenhum registro encontrado"));
+
       return res.send(sendBodyFormatter(result, "body"));
     } catch (error: any) {
       console.log(error);
-      return res.send(sendBodyFormatter(error.message));
+      return res.status(500).send(sendBodyFormatter(error.message));
     }
   },
 
   async create(req: Request, res: Response) {
     try {
-      console.log(req.body);
       const body = req.body as { servicos: IServico[]; mecanico: string };
       const result = await new OrdemServicoService().create(body);
       return res.send(sendBodyFormatter(result, "body"));
     } catch (error: any) {
       console.log(error);
-      return res.send(sendBodyFormatter(error.message));
+      return res.status(500).send(sendBodyFormatter(error.message));
     }
   },
 };

@@ -10,7 +10,7 @@ import {
   IServico,
 } from "../interfaces/OrdemServico.interface";
 import { ServicoModel } from "../models/ServicoModel";
-import { InferAttributes, Transaction, WhereOptions } from "sequelize";
+import { InferAttributes, Op, Transaction, WhereOptions } from "sequelize";
 import { IOrdemServico } from "../interfaces/Models.interface";
 
 export class OrdemServicoService extends Conection {
@@ -18,8 +18,8 @@ export class OrdemServicoService extends Conection {
     super(conexao());
   }
 
-  private mapperGetAll(ordemServico: any[]) {
-    return ordemServico.map((os) => {
+  private mapperGetAll(ordemServico: any[], somarOS?: boolean) {
+    const ordensServicos = ordemServico.map((os) => {
       const retorno = {} as IOSMapper;
       retorno.idOrdemServico = os.idOrdemServico;
       retorno["dataExecucao"] = os.dataExecucao;
@@ -36,37 +36,57 @@ export class OrdemServicoService extends Conection {
               (servA: IServico, servB: IServico) =>
                 Number(servA.valor) + Number(servB.valor)
             )
-          : os.servicos[0].valor;
-      retorno.totalMecanico = retorno.totalOS / 2;
+          : Number(os.servicos[0].valor);
+      retorno.totalMecanico = Number(retorno.totalOS) / 2;
       return retorno;
     });
+    const totaisOs: any =
+      ordensServicos.length > 1
+        ? ordensServicos.map((a) => a.totalOS).reduce((a, b) => a + b)
+        : ordensServicos[0].totalOS;
+
+    return somarOS ? { ordensServicos, totaisOs } : { ordensServicos };
   }
 
   async getAll(mecanicoId?: number) {
-    const condition: WhereOptions<InferAttributes<IOrdemServico>> | undefined =
-      mecanicoId ? { mecanicoId } : {};
+    try {
+      const condition:
+        | WhereOptions<InferAttributes<IOrdemServico>>
+        | undefined = mecanicoId
+        ? {
+            mecanicoId,
+            dataExecucao: { [Op.gte]: "2024-03-24", [Op.lte]: "2024-03-27" },
+          }
+        : {};
 
-    const ordensServicos = await OrdemServicoModel.findAll({
-      where: condition,
-      include: [
-        {
-          model: MecanicoModel,
-          required: true,
-        },
-        {
-          model: ServicoModel,
-          attributes: {
-            include: [
-              `${ServicoModel.getAttributes().servico.field}`,
-              `${ServicoModel.getAttributes().valor.field}`,
-            ],
+      const ordensServicos = await OrdemServicoModel.findAll({
+        where: condition,
+        include: [
+          {
+            model: MecanicoModel,
+            required: true,
           },
-          required: true,
-        },
-      ],
-    });
-    await this.closeConection();
-    return await this.mapperGetAll(ordensServicos);
+          {
+            model: ServicoModel,
+            attributes: {
+              include: [
+                `${ServicoModel.getAttributes().servico.field}`,
+                `${ServicoModel.getAttributes().valor.field}`,
+              ],
+            },
+            required: true,
+          },
+        ],
+      });
+
+      await this.closeConection();
+
+      if (ordensServicos.length == 0) return { ordensServicos };
+
+      return this.mapperGetAll(ordensServicos, true);
+    } catch (error: any) {
+      throw new Error(error);
+    }
   }
 
   async create({
@@ -106,7 +126,6 @@ export class OrdemServicoService extends Conection {
         servicosIds.push(servicoToInclude.idServico);
       }
       idsMecanicoAndServicos.servicosId = servicosIds;
-      console.log("idsMecanicoAndServicos", idsMecanicoAndServicos);
 
       return await this.createOSServico({
         iOsServicoPost: idsMecanicoAndServicos,
@@ -149,9 +168,11 @@ export class OrdemServicoService extends Conection {
       }
 
       await transacao.commit();
+      await this.closeConection();
       return ordemServicoCriada;
     } catch (error: any) {
       await transacao.rollback();
+      await this.closeConection();
       throw new Error(error);
     }
   }
