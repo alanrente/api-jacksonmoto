@@ -1,12 +1,11 @@
 import { DataTypes } from "sequelize";
 import database from "../infra/database";
 import { IOrdemServico } from "../interfaces/Models.interface";
-import { OS_ServicosModel } from "./OS_ServicosModel";
-import { ServicoModel } from "./ServicoModel";
+import { MecanicoModel } from "./MecanicoModel";
 const sequelize = database();
 
 const OrdemServicoModel = sequelize.define<IOrdemServico>(
-  "ordemServico",
+  "OrdemServico",
   {
     idOrdemServico: {
       type: DataTypes.INTEGER,
@@ -30,5 +29,7 @@ const OrdemServicoModel = sequelize.define<IOrdemServico>(
     },
   }
 );
+
+OrdemServicoModel.belongsTo(MecanicoModel, { foreignKey: "mecanicoId" });
 
 export { OrdemServicoModel };

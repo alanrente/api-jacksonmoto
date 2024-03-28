@@ -2,44 +2,48 @@ import moment from "moment";
 import conexao from "../infra/database";
 import { Conection } from "../interfaces/Conection.interface";
 import { MecanicoModel } from "../models/MecanicoModel";
-import { OS_ServicosModel } from "../models/OS_ServicosModel";
+import { OsServicosModel } from "../models/OSServicosModel";
 import { OrdemServicoModel } from "../models/OrdemServicoModel";
 import { IOsServicoPost } from "../interfaces/OrdemServicoRequest.interface";
 import { ServicoModel } from "../models/ServicoModel";
 
 export class OrdemServicoService extends Conection {
-  private ordemServicoModel: typeof OrdemServicoModel;
-  private osServicosModel: typeof OS_ServicosModel;
-  private mecanicoModel: typeof MecanicoModel;
-
   constructor() {
     super(conexao());
-    this.ordemServicoModel = OrdemServicoModel;
-    this.osServicosModel = OS_ServicosModel;
-    this.mecanicoModel = MecanicoModel;
   }
 
   async getAll() {
-    const categorias = await this.ordemServicoModel.findAll({
-      include: {
-        model: ServicoModel,
-        attributes: {
-          include: [
-            `${ServicoModel.getAttributes().servico.field}`,
-            `${ServicoModel.getAttributes().valor.field}`,
-          ],
+    const ordensServicos = await OrdemServicoModel.findAll({
+      attributes: { exclude: ["createdAt", "updatedAt", "mecanicoId"] },
+      include: [
+        {
+          model: ServicoModel,
+          attributes: {
+            include: [
+              `${ServicoModel.getAttributes().servico.field}`,
+              `${ServicoModel.getAttributes().valor.field}`,
+            ],
+            exclude: ["createdAt", "updatedAt"],
+          },
+          required: true,
         },
-        as: "servicos",
-      },
+        {
+          model: MecanicoModel,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          required: true,
+        },
+      ],
     });
     await this.closeConection();
-    return categorias;
+    return ordensServicos;
   }
   async createOSServico({ mecanicoId, servicosId }: IOsServicoPost) {
     const transacao = await this.conection.transaction();
     try {
       const dataExecucao = moment().format("YYYY-MM-DD");
-      const ordemServicoCriada = await this.ordemServicoModel.create(
+      const ordemServicoCriada = await OrdemServicoModel.create(
         {
           dataExecucao,
           mecanicoId,
@@ -48,7 +52,7 @@ export class OrdemServicoService extends Conection {
       );
 
       for await (let id of servicosId) {
-        await this.osServicosModel.create(
+        await OsServicosModel.create(
           {
             OrdemServicoId: ordemServicoCriada.idOrdemServico,
             ServicoId: id,

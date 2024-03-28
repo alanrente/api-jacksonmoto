@@ -5,7 +5,7 @@ import { OrdemServicoModel } from "./OrdemServicoModel";
 import { IOsServicos } from "../interfaces/Models.interface";
 
 const OsServicosModel = database().define<IOsServicos>(
-  "OsServicosModel",
+  "osServico",
   {
     ServicoId: {
       type: DataTypes.INTEGER,
@@ -16,7 +16,12 @@ const OsServicosModel = database().define<IOsServicos>(
       field: "ordem_servico_id",
     },
   },
-  { tableName: "OS_SERVICOS_TB", freezeTableName: true }
+  {
+    tableName: "OS_SERVICOS_TB",
+    freezeTableName: true,
+    createdAt: false,
+    updatedAt: false,
+  }
 );
 
 ServicoModel.belongsToMany(OrdemServicoModel, {
@@ -29,11 +34,4 @@ OrdemServicoModel.belongsToMany(ServicoModel, {
   foreignKey: OsServicosModel.getAttributes().OrdemServicoId,
 });
 
-// OsServicosModel.hasMany(OrdemServicoModel, {
-//   foreignKey: OrdemServicoModel.getAttributes().idOrdemServico,
-// });
-// OsServicosModel.hasMany(ServicoModel, {
-//   foreignKey: ServicoModel.getAttributes().idServico,
-// });
-
-export { OsServicosModel as OS_ServicosModel };
+export { OsServicosModel };

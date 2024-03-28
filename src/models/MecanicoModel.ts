@@ -1,9 +1,11 @@
 import { DataTypes } from "sequelize";
 import database from "../infra/database";
+import { IMecanicoModel } from "../interfaces/Models.interface";
+import { OrdemServicoModel } from "./OrdemServicoModel";
 const sequelize = database();
 
-export const MecanicoModel = sequelize.define(
-  "MecanicoModel",
+const MecanicoModel = sequelize.define<IMecanicoModel>(
+  "mecanico",
   {
     idMecanico: {
       type: DataTypes.INTEGER,
@@ -22,3 +24,5 @@ export const MecanicoModel = sequelize.define(
     },
   }
 );
+
+export { MecanicoModel };

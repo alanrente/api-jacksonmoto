@@ -7,7 +7,7 @@ import { ServicoModel } from "./models/ServicoModel";
 import { MecanicoModel } from "./models/MecanicoModel";
 import { OrdemServicoModel } from "./models/OrdemServicoModel";
 import { CategoriaModel } from "./models/CategoriaModel";
-import { OS_ServicosModel } from "./models/OS_ServicosModel";
+import { OsServicosModel } from "./models/OSServicosModel";
 const app = express();
 
 app.use(cors());
@@ -23,17 +23,17 @@ const port = process.env.port;
 const alter = process.env.ALTER === "true";
 
 app.listen(port, async () => {
-  const models = [
-    ServicoModel,
-    MecanicoModel,
-    OrdemServicoModel,
-    CategoriaModel,
-    OS_ServicosModel,
-  ];
+  // const models = [
+  //   ServicoModel,
+  //   MecanicoModel,
+  //   OrdemServicoModel,
+  //   CategoriaModel,
+  //   OS_ServicosModel,
+  // ];
 
-  models.forEach((model) => {
-    model.sync();
-  });
+  // models.forEach((model) => {
+  //   model.sync();
+  // });
 
   console.debug(`http://localhost:${port}`);
 });

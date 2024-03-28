@@ -43,3 +43,12 @@ export interface IServicoModel
   servico: string;
   valor: number;
 }
+
+export interface IMecanicoModel
+  extends Model<
+    InferAttributes<IMecanicoModel>,
+    InferCreationAttributes<IMecanicoModel>
+  > {
+  idMecanico: CreationOptional<number>;
+  nome: string;
+}
