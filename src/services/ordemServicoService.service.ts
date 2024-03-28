@@ -9,14 +9,19 @@ import {
   IServico,
 } from "../interfaces/OrdemServicoRequest.interface";
 import { ServicoModel } from "../models/ServicoModel";
+import { InferAttributes, WhereOptions } from "sequelize";
+import { IOrdemServico } from "../interfaces/Models.interface";
 
 export class OrdemServicoService extends Conection {
   constructor() {
     super(conexao());
   }
 
-  async getAll() {
+  async getAll(mecanicoId?: number) {
+    const condition: WhereOptions<InferAttributes<IOrdemServico>> | undefined =
+      mecanicoId ? { mecanicoId } : {};
     const ordensServicos = await OrdemServicoModel.findAll({
+      where: condition,
       attributes: { exclude: ["createdAt", "updatedAt", "mecanicoId"] },
       include: [
         {

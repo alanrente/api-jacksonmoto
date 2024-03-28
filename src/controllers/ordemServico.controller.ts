@@ -9,7 +9,8 @@ import {
 export const OrdemServicoController = {
   async getAll(req: Request, res: Response) {
     try {
-      const result = await new OrdemServicoService().getAll();
+      const { mecanicoId } = req.query as { mecanicoId: string };
+      const result = await new OrdemServicoService().getAll(+mecanicoId);
       return res.send(sendBodyFormatter(result, "body"));
     } catch (error: any) {
       console.log(error);
