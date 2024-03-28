@@ -21,7 +21,21 @@ export const OrdemServicoController = {
         mecanicoId,
         servicosId,
       });
-      res.send(sendBodyFormatter(ordemServico, "body"));
+      return res.send(sendBodyFormatter(ordemServico, "body"));
+    } catch (error: any) {
+      console.log(error);
+      return res.send(sendBodyFormatter(error.message));
+    }
+  },
+  async createWithoutServicosAndMecanico(req: Request, res: Response) {
+    try {
+      console.log(req.body);
+      const body = req.body as { servicos: string[]; mecanico: string };
+      const result =
+        await new OrdemServicoService().createOSWithoutServicosAndMecanico(
+          body
+        );
+      return res.send(sendBodyFormatter(result, "body"));
     } catch (error: any) {
       console.log(error);
       return res.send(sendBodyFormatter(error.message));

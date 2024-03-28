@@ -5,5 +5,9 @@ const ordemServicoRouter = Router();
 
 ordemServicoRouter.get("/", OrdemServicoController.getAll);
 ordemServicoRouter.post("/", OrdemServicoController.create);
+ordemServicoRouter.post(
+  "/os",
+  OrdemServicoController.createWithoutServicosAndMecanico
+);
 
 export default ordemServicoRouter;

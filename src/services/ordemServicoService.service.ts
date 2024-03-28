@@ -39,6 +39,47 @@ export class OrdemServicoService extends Conection {
     await this.closeConection();
     return ordensServicos;
   }
+
+  async createOSWithoutServicosAndMecanico({
+    mecanico,
+    servicos,
+  }: {
+    mecanico: string;
+    servicos: string[];
+  }) {
+    // TODO: passar o servico completo com servico e preço para criar corretamente um serviço que não exista na base
+    const transacao = await this.conection.transaction();
+    try {
+      const idsMecanicoAndServicos = {} as IOsServicoPost;
+
+      const findOrCreateMecanicoByName = await MecanicoModel.findCreateFind({
+        where: { nome: mecanico },
+        transaction: transacao,
+      });
+
+      idsMecanicoAndServicos.mecanicoId =
+        findOrCreateMecanicoByName[0].idMecanico;
+
+      const servicosIds: number[] = [];
+      for await (const servico of servicos) {
+        const findOrCreateServicoByName = await ServicoModel.findCreateFind({
+          where: { servico: servico },
+          transaction: transacao,
+        });
+
+        servicosIds.push(findOrCreateServicoByName[0].dataValues.idServico);
+      }
+      idsMecanicoAndServicos.servicosId = servicosIds;
+      console.log("idsMecanicoAndServicos", idsMecanicoAndServicos);
+      await transacao.commit();
+
+      return await this.createOSServico(idsMecanicoAndServicos);
+    } catch (error: any) {
+      await transacao.rollback();
+      throw new Error(error.message);
+    }
+  }
+
   async createOSServico({ mecanicoId, servicosId }: IOsServicoPost) {
     const transacao = await this.conection.transaction();
     try {
