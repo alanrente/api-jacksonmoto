@@ -20,10 +20,18 @@ export class OrdemServicoService extends Conection {
   async getAll(mecanicoId?: number) {
     const condition: WhereOptions<InferAttributes<IOrdemServico>> | undefined =
       mecanicoId ? { mecanicoId } : {};
+
     const ordensServicos = await OrdemServicoModel.findAll({
       where: condition,
       attributes: { exclude: ["createdAt", "updatedAt", "mecanicoId"] },
       include: [
+        {
+          model: MecanicoModel,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          required: true,
+        },
         {
           model: ServicoModel,
           attributes: {
@@ -31,13 +39,6 @@ export class OrdemServicoService extends Conection {
               `${ServicoModel.getAttributes().servico.field}`,
               `${ServicoModel.getAttributes().valor.field}`,
             ],
-            exclude: ["createdAt", "updatedAt"],
-          },
-          required: true,
-        },
-        {
-          model: MecanicoModel,
-          attributes: {
             exclude: ["createdAt", "updatedAt"],
           },
           required: true,
