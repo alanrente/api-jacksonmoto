@@ -49,7 +49,7 @@ export class OrdemServicoService extends Conection {
     return ordensServicos;
   }
 
-  async createOSWithoutServicosAndMecanico({
+  async create({
     mecanico,
     servicos,
   }: {
@@ -88,7 +88,7 @@ export class OrdemServicoService extends Conection {
     }
   }
 
-  async createOSServico({ mecanicoId, servicosId }: IOsServicoPost) {
+  private async createOSServico({ mecanicoId, servicosId }: IOsServicoPost) {
     const transacao = await this.conection.transaction();
     try {
       const dataExecucao = moment().format("YYYY-MM-DD");
