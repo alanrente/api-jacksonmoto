@@ -20,4 +20,5 @@ export interface IOSMapper {
   nomeMecanico: string;
   servicos: IServico[];
   totalOS: number;
+  totalMecanico: number;
 }

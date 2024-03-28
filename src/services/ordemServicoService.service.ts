@@ -34,6 +34,7 @@ export class OrdemServicoService extends Conection {
         (servA: IServico, servB: IServico) =>
           Number(servA.valor) + Number(servB.valor)
       );
+      retorno.totalMecanico = retorno.totalOS / 2;
       return retorno;
     });
   }
