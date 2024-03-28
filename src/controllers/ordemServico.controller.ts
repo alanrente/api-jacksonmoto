@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import sendBodyFormatter from "../utils/sendBodyFormatter";
 import { OrdemServicoService } from "../services/ordemServicoService.service";
-import { IOsServicoPost, IServico } from "../interfaces/OrdemServico.interface";
+import { IServico } from "../interfaces/OrdemServico.interface";
 
 export const OrdemServicoController = {
   async getAll(req: Request, res: Response) {

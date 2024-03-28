@@ -113,7 +113,7 @@ export class OrdemServicoService extends Conection {
   private async createOSServico({ mecanicoId, servicosId }: IOsServicoPost) {
     const transacao = await this.conection.transaction();
     try {
-      const dataExecucao = moment().format("YYYY-MM-DD");
+      const dataExecucao = moment().format("YYYY-MM-27");
       const ordemServicoCriada = await OrdemServicoModel.create(
         {
           dataExecucao,
