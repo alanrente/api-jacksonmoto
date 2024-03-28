@@ -5,9 +5,10 @@ import { MecanicoModel } from "../models/MecanicoModel";
 import { OsServicosModel } from "../models/OSServicosModel";
 import { OrdemServicoModel } from "../models/OrdemServicoModel";
 import {
+  IOSMapper,
   IOsServicoPost,
   IServico,
-} from "../interfaces/OrdemServicoRequest.interface";
+} from "../interfaces/OrdemServico.interface";
 import { ServicoModel } from "../models/ServicoModel";
 import { InferAttributes, WhereOptions } from "sequelize";
 import { IOrdemServico } from "../interfaces/Models.interface";
@@ -15,6 +16,26 @@ import { IOrdemServico } from "../interfaces/Models.interface";
 export class OrdemServicoService extends Conection {
   constructor() {
     super(conexao());
+  }
+
+  private mapperGetAll(ordemServico: any[]): IOSMapper[] {
+    return ordemServico.map((os) => {
+      const retorno = {} as IOSMapper;
+      retorno.idOrdemServico = os.idOrdemServico;
+      retorno["dataExecucao"] = os.dataExecucao;
+      retorno.idMecanico = os.mecanico.idMecanico;
+      retorno.nomeMecanico = os.mecanico.nome;
+      retorno.servicos = os.servicos.map((servico: IServico) => ({
+        idServico: servico.idServico,
+        servico: servico.servico,
+        valor: servico.valor,
+      }));
+      retorno.totalOS = os.servicos.reduce(
+        (servA: IServico, servB: IServico) =>
+          Number(servA.valor) + Number(servB.valor)
+      );
+      return retorno;
+    });
   }
 
   async getAll(mecanicoId?: number) {
@@ -46,7 +67,7 @@ export class OrdemServicoService extends Conection {
       ],
     });
     await this.closeConection();
-    return ordensServicos;
+    return this.mapperGetAll(ordensServicos);
   }
 
   async create({
