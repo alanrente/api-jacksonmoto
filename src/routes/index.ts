@@ -4,9 +4,11 @@ import categoriaRouter from "./categoria.router";
 import ordemServicoRouter from "./ordemServico.router";
 import servicoRouter from "./servico.router";
 import middleCheckAuth from "../middlewares/middleCheckAuth";
+import authRouter from "./Auth.router";
 
 const routes = Router();
 
+routes.use("/auth", authRouter);
 routes.use("/home", middleCheckAuth, homeRouter);
 routes.use("/categorias", categoriaRouter);
 routes.use("/ordem-servicos", ordemServicoRouter);
