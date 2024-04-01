@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import routes from "./routes";
 import { ServicoModel } from "./models/ServicoModel";

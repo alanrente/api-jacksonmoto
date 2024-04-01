@@ -3,10 +3,11 @@ import homeRouter from "./home.router";
 import categoriaRouter from "./categoria.router";
 import ordemServicoRouter from "./ordemServico.router";
 import servicoRouter from "./servico.router";
+import middleCheckAuth from "../middlewares/middleCheckAuth";
 
 const routes = Router();
 
-routes.use("/home", homeRouter);
+routes.use("/home", middleCheckAuth, homeRouter);
 routes.use("/categorias", categoriaRouter);
 routes.use("/ordem-servicos", ordemServicoRouter);
 routes.use("/servicos", servicoRouter);
