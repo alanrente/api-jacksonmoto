@@ -36,6 +36,7 @@ export class AuthService extends Conection {
         throw "Usuário sem chave cadastrada!";
       }
 
+      await this.closeConection();
       return user.chave;
     } catch (error: any) {
       throw new Error(error);
