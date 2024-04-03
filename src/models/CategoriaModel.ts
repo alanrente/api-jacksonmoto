@@ -1,11 +1,4 @@
-import {
-  CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  Model,
-  Sequelize,
-} from "sequelize";
+import { DataTypes } from "sequelize";
 import database from "../infra/database";
 import { ICategoriaModel } from "../interfaces/Models.interface";
 const sequelize = database();

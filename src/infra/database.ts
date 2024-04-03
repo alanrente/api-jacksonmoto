@@ -7,6 +7,10 @@ const { database, username, password, host } = {
   host: `${process.env.DB_HOST}`,
 };
 
+const loggerQuery = (sql: string) => {
+  console.log(sql);
+};
+
 export default () => {
   try {
     const sequelize = new Sequelize(database, username, password, {
@@ -14,6 +18,7 @@ export default () => {
       host: host,
       schema: process.env.DB_SCHEMA,
       timezone: "-03:00",
+      logging: process.env.NODE_ENV == "development" ? loggerQuery : false,
     });
     console.log("banco conectado!");
     return sequelize;
