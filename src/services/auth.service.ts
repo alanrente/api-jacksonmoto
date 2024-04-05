@@ -11,17 +11,17 @@ export class AuthService extends Conection {
   }
 
   async getOneUser({
-    senha,
-    usuario,
+    senha: pass,
+    usuario: username,
   }: {
     usuario: string;
     senha: string;
-  }): Promise<string> {
+  }) {
     try {
-      const [result, metadata] = await this.conection.query(
-        "select * from jackson_moto_db.usuario_tb where usuario = $usuario and senha = $senha limit 1",
+      const [result] = await this.conection.query(
+        "select * from jackson_moto_db.usuario_tb where usuario = $username and senha = $pass limit 1",
         {
-          bind: { usuario, senha },
+          bind: { username, pass },
           type: Sequelize.QueryTypes.SELECT,
           raw: true,
         }
@@ -37,9 +37,10 @@ export class AuthService extends Conection {
       }
 
       await this.closeConection();
-      return user.chave;
+      return { usuario: user.usuario, chave: user.chave };
     } catch (error: any) {
       throw new Error(error);
     }
   }
 }
+new AuthService().getOneUser;
