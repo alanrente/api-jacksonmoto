@@ -9,7 +9,7 @@ export const AuthController = {
       const { senha, usuario } = req.body as User;
       const result = await new AuthService().getOneUser({ senha, usuario });
 
-      return res.send(sendBodyFormatter({ token: result }, "body"));
+      return res.send(sendBodyFormatter({ chave: result }, "body"));
     } catch (error: any) {
       console.log(error);
       return res.status(500).send(sendBodyFormatter(error.message));
