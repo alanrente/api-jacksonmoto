@@ -4,7 +4,7 @@ import categoriaRouter from "./categoria.router";
 import ordemServicoRouter from "./ordemServico.router";
 import servicoRouter from "./servico.router";
 import middleCheckAuth from "../middlewares/middleCheckAuth";
-import authRouter from "./Auth.router";
+import authRouter from "./auth.router";
 
 const routes = Router();
 
