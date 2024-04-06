@@ -64,7 +64,10 @@ export default class Files {
         strFileToSave = strFileToSave + template;
       }
 
-      strFileToSave = strFileToSave + rowFile + "\r\n";
+      strFileToSave =
+        strFileToSave +
+        rowFile +
+        (index === fileAsString.split("\r\n").length - 1 ? "" : "\r\n");
     });
 
     return strFileToSave;
