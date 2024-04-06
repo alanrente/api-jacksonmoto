@@ -4,9 +4,9 @@ import Files from "./files";
 
 /*
  * FLUXO
- * Criar arquivos .controller.ts, .service.ts e .router.ts
- * Incluir route criado no index da pasta routes abaixo do ultimo routes.use
- *
+ * Cria arquivos .controller.ts, .service.ts e .router.ts(model não implementado)
+ * Inclui route criado no index da pasta routes abaixo do ultimo routes.use
+ * Inclui import no index da pasta routes abaixo do ultimo import
  *
  */
 

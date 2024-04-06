@@ -1,7 +1,10 @@
 interface CriaTemplate {
-  criaServiceTemplate(): string;
-  criaControllerTemplate(): string;
-  criaRouteTemplate(): string;
+  templateService(): string;
+  templateController(): string;
+  templateRoute(): string;
+  templateRoute(): string;
+  templateRowRouteUse(): string;
+  templateRowImport(): string;
   criaRecursoComInicialMaiuscula(): void;
 }
 
@@ -13,7 +16,7 @@ class Templates implements CriaTemplate {
     this.criaRecursoComInicialMaiuscula();
   }
 
-  criaRouteTemplate(): string {
+  templateRoute(): string {
     return `import { Router } from "express";
 import { ${this.Recurso}Controller } from "../controllers/${this.recurso}.controller";
     
@@ -24,7 +27,7 @@ ${this.recurso}Router.get("/", ${this.Recurso}Controller.getAll);
 export default ${this.recurso}Router;`;
   }
 
-  criaServiceTemplate(): string {
+  templateService(): string {
     return `import conexao from "../infra/database";
 import { Sequelize } from "sequelize";
 // import { ${this.Recurso}Model } from "../models/${this.Recurso}Model";
@@ -46,7 +49,7 @@ export class ${this.Recurso}Service {
 }`;
   }
 
-  criaControllerTemplate(): string {
+  templateController(): string {
     return `import { Request, Response } from "express";
 import { ${this.Recurso}Service } from "../services/${this.recurso}.service";
 import sendBodyFormatter from "../utils/sendBodyFormatter";
@@ -62,6 +65,14 @@ export const ${this.Recurso}Controller = {
     }
   },
 };`;
+  }
+
+  templateRowImport(): string {
+    return `import ${this.recurso}Router from "./${this.recurso}.router";\r\n`;
+  }
+
+  templateRowRouteUse(): string {
+    return `routes.use("/${this.recurso}", ${this.recurso}Router);\r\n`;
   }
 
   criaRecursoComInicialMaiuscula() {
