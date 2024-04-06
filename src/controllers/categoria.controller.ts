@@ -1,14 +1,6 @@
 import { Request, Response } from "express";
 import { CategoriaService } from "../services/categoria.service";
-
-const sendBodyFormatter = (body: any, type: "msg" | "body" = "msg") => {
-  const sends = {
-    msg: { message: body },
-    body: body,
-  };
-
-  return sends[type];
-};
+import sendBodyFormatter from "../utils/sendBodyFormatter";
 
 export const CategoriaController = {
   async getAll(req: Request, res: Response) {
