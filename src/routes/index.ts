@@ -6,6 +6,7 @@ import servicoRouter from "./servico.router";
 import middleCheckAuth from "../middlewares/middleCheckAuth";
 import authRouter from "./auth.router";
 import mapperRoutes from "../utils/mapperRoutes.util";
+import clienteRouter from "./cliente.router";
 
 const routes = Router();
 
@@ -14,6 +15,7 @@ routes.use("/home", middleCheckAuth, homeRouter);
 routes.use("/categorias", categoriaRouter);
 routes.use("/ordem-servicos", ordemServicoRouter);
 routes.use("/servicos", middleCheckAuth, servicoRouter);
+routes.use("/cliente", clienteRouter);
 
 mapperRoutes(routes);
 
