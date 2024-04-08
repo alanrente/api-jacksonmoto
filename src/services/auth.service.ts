@@ -1,4 +1,3 @@
-import moment from "moment";
 import conexao from "../infra/database";
 import { Conection } from "../interfaces/Conection.interface";
 
