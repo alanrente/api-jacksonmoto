@@ -23,6 +23,7 @@ export interface IOrdemServico
   idOrdemServico: CreationOptional<number>;
   dataExecucao: string;
   mecanicoId: number;
+  clienteId?: number;
 }
 
 export interface IOsServicos

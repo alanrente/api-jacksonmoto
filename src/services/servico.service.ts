@@ -1,5 +1,5 @@
 import conexao from "../infra/database";
-import { ServicoModel } from "../models/ServicoModel";
+import { ServicoModel } from "../models/servico.model";
 import { Conection } from "../interfaces/Conection.interface";
 
 export class ServicoService extends Conection {

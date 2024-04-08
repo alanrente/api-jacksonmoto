@@ -1,17 +1,18 @@
 import moment from "moment";
 import conexao from "../infra/database";
 import { Conection } from "../interfaces/Conection.interface";
-import { MecanicoModel } from "../models/MecanicoModel";
-import { OsServicosModel } from "../models/OSServicosModel";
-import { OrdemServicoModel } from "../models/OrdemServicoModel";
+import { MecanicoModel } from "../models/mecanico.model";
+import { OsServicosModel } from "../models/oSServicos.model";
+import { OrdemServicoModel } from "../models/ordemServico.model";
 import {
   IOSMapper,
   IOsServicoPost,
   IServico,
 } from "../interfaces/OrdemServico.interface";
-import { ServicoModel } from "../models/ServicoModel";
+import { ServicoModel } from "../models/servico.model";
 import { InferAttributes, Op, Transaction, WhereOptions } from "sequelize";
 import { IOrdemServico } from "../interfaces/Models.interface";
+import { ClienteModel } from "../models/cliente.model";
 
 export class OrdemServicoService extends Conection {
   constructor() {
@@ -66,6 +67,7 @@ export class OrdemServicoService extends Conection {
             model: MecanicoModel,
             required: true,
           },
+          { model: ClienteModel, required: true },
           {
             model: ServicoModel,
             attributes: {
@@ -100,28 +102,19 @@ export class OrdemServicoService extends Conection {
     try {
       const idsMecanicoAndServicos = {} as IOsServicoPost;
 
-      const findOrCreateMecanicoByName = await MecanicoModel.findCreateFind({
+      const [findOrCreateMecanicoByName] = await MecanicoModel.findCreateFind({
         where: { nome: mecanico },
         transaction: transacao,
       });
 
-      idsMecanicoAndServicos.mecanicoId =
-        findOrCreateMecanicoByName[0].idMecanico;
+      idsMecanicoAndServicos.mecanicoId = findOrCreateMecanicoByName.idMecanico;
 
       const servicosIds: number[] = [];
       for await (const { servico, valor } of servicos) {
-        let servicoToInclude = null;
-        servicoToInclude = await ServicoModel.findOne({
-          where: { servico },
+        const [servicoToInclude] = await ServicoModel.findCreateFind({
+          where: { servico, valor: Number(valor) },
           transaction: transacao,
         });
-
-        if (!servicoToInclude) {
-          servicoToInclude = await ServicoModel.create(
-            { servico, valor: Number(valor) },
-            { transaction: transacao }
-          );
-        }
 
         servicosIds.push(servicoToInclude.idServico);
       }

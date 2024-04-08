@@ -1,7 +1,8 @@
 import { DataTypes } from "sequelize";
 import database from "../infra/database";
 import { IOrdemServico } from "../interfaces/Models.interface";
-import { MecanicoModel } from "./MecanicoModel";
+import { MecanicoModel } from "./mecanico.model";
+import { ClienteModel } from "./cliente.model";
 const sequelize = database();
 
 const OrdemServicoModel = sequelize.define<IOrdemServico>(
@@ -21,6 +22,7 @@ const OrdemServicoModel = sequelize.define<IOrdemServico>(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    clienteId: { type: DataTypes.INTEGER, allowNull: true },
   },
   {
     tableName: "ORDEM_SERVICO_TB",
@@ -31,5 +33,6 @@ const OrdemServicoModel = sequelize.define<IOrdemServico>(
 );
 
 OrdemServicoModel.belongsTo(MecanicoModel, { foreignKey: "mecanicoId" });
+OrdemServicoModel.belongsTo(ClienteModel, { foreignKey: "clienteId" });
 
 export { OrdemServicoModel };
