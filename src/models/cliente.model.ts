@@ -1,8 +1,9 @@
 import { DataTypes } from "sequelize";
 import database from "../infra/database";
+import { ICliente } from "../interfaces/Models.interface";
 const sequelize = database();
 
-export const ClienteModel = sequelize.define(
+export const ClienteModel = sequelize.define<ICliente>(
   "cliente",
   {
     idCliente: {

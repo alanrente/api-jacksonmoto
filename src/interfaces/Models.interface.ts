@@ -3,7 +3,9 @@ import {
   InferAttributes,
   InferCreationAttributes,
   Model,
+  Optional,
 } from "sequelize";
+import { MakeNullishOptional } from "sequelize/types/utils";
 
 export interface ICategoriaModel
   extends Model<
@@ -24,6 +26,13 @@ export interface IOrdemServico
   dataExecucao: string;
   mecanicoId: number;
   clienteId?: number;
+}
+export interface ICliente
+  extends Model<InferAttributes<ICliente>, InferCreationAttributes<ICliente>> {
+  idCliente: CreationOptional<number>;
+  nome?: string;
+  placa?: number;
+  contato?: number;
 }
 
 export interface IOsServicos

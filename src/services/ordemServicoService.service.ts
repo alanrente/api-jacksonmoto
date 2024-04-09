@@ -11,7 +11,7 @@ import {
 } from "../interfaces/OrdemServico.interface";
 import { ServicoModel } from "../models/servico.model";
 import { InferAttributes, Op, Transaction, WhereOptions } from "sequelize";
-import { IOrdemServico } from "../interfaces/Models.interface";
+import { ICliente, IOrdemServico } from "../interfaces/Models.interface";
 import { ClienteModel } from "../models/cliente.model";
 
 export class OrdemServicoService extends Conection {
@@ -53,16 +53,15 @@ export class OrdemServicoService extends Conection {
     return somarOS ? { ordensServicos, totaisOs } : { ordensServicos };
   }
 
-  async getAll(mecanicoId?: number) {
+  async getAll(mecanicoId?: number, clienteId?: number) {
     try {
-      const condition:
-        | WhereOptions<InferAttributes<IOrdemServico>>
-        | undefined = mecanicoId
-        ? {
-            mecanicoId,
-            dataExecucao: { [Op.gte]: "2024-03-24", [Op.lte]: "2024-03-27" },
-          }
-        : {};
+      const condition: WhereOptions<InferAttributes<IOrdemServico>> = {
+        mecanicoId,
+        clienteId,
+      };
+
+      if (!mecanicoId) delete condition.mecanicoId;
+      if (!clienteId) delete condition.clienteId;
 
       const ordensServicos = await OrdemServicoModel.findAll({
         where: condition,
@@ -98,9 +97,11 @@ export class OrdemServicoService extends Conection {
   async create({
     mecanico,
     servicos,
+    cliente,
   }: {
     mecanico: string;
     servicos: IServico[];
+    cliente: ICliente;
   }) {
     const transacao = await this.conection.transaction();
     try {
@@ -110,8 +111,14 @@ export class OrdemServicoService extends Conection {
         where: { nome: mecanico },
         transaction: transacao,
       });
-
       idsMecanicoAndServicos.mecanicoId = findOrCreateMecanicoByName.idMecanico;
+
+      const { contato, nome, placa } = cliente;
+      const [findOrCreateClienteByName] = await ClienteModel.findCreateFind({
+        where: { contato, nome, placa },
+        transaction: transacao,
+      });
+      idsMecanicoAndServicos.clienteId = findOrCreateClienteByName.idCliente;
 
       const servicosIds: number[] = [];
       for await (const { servico, valor } of servicos) {
@@ -150,6 +157,7 @@ export class OrdemServicoService extends Conection {
         {
           dataExecucao,
           mecanicoId: iOsServicoPost.mecanicoId,
+          clienteId: iOsServicoPost.clienteId,
         },
         { transaction: transacao }
       );

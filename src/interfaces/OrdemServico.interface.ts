@@ -1,6 +1,7 @@
 export interface IOsServicoPost {
   servicosId: number[];
   mecanicoId: number;
+  clienteId: number;
 }
 
 export interface IServico {
