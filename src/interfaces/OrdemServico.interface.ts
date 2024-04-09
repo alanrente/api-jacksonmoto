@@ -15,6 +15,10 @@ export interface IMecanico {
 
 export interface IOSMapper {
   idOrdemServico: number;
+  idCliente: number;
+  nomeCliente: string;
+  placa: string;
+  contato: string;
   dataExecucao: string;
   idMecanico: number;
   nomeMecanico: string;

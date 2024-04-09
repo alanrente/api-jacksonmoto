@@ -26,6 +26,10 @@ export class OrdemServicoService extends Conection {
       retorno["dataExecucao"] = os.dataExecucao;
       retorno.idMecanico = os.mecanico.idMecanico;
       retorno.nomeMecanico = os.mecanico.nome;
+      retorno.idCliente = os.ClienteModel.idCliente;
+      retorno.nomeCliente = os.ClienteModel.nome;
+      retorno.placa = os.ClienteModel.placa;
+      retorno.contato = os.ClienteModel.contato;
       retorno.servicos = os.servicos.map((servico: IServico) => ({
         idServico: servico.idServico,
         servico: servico.servico,
