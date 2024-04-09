@@ -3,7 +3,7 @@ import database from "../infra/database";
 const sequelize = database();
 
 export const ClienteModel = sequelize.define(
-  "ClienteModel",
+  "cliente",
   {
     idCliente: {
       type: DataTypes.INTEGER,

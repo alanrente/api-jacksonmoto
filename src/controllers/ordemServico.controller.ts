@@ -9,7 +9,7 @@ export const OrdemServicoController = {
       const { mecanicoId } = req.query as { mecanicoId: string };
       const result = await new OrdemServicoService().getAll(+mecanicoId);
 
-      if (result.ordensServicos.length == 0)
+      if (result.length == 0)
         return res
           .status(404)
           .send(sendBodyFormatter("nenhum registro encontrado"));

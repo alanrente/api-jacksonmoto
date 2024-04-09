@@ -87,9 +87,9 @@ export class OrdemServicoService extends Conection {
 
       await this.closeConection();
 
-      if (ordensServicos.length == 0) return { ordensServicos };
+      if (ordensServicos.length == 0) return ordensServicos;
 
-      return this.mapperGetAll(ordensServicos, true);
+      return ordensServicos;
     } catch (error: any) {
       throw new Error(error);
     }
