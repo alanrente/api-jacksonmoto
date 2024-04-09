@@ -13,9 +13,9 @@ const routes = Router();
 routes.use("/auth", authRouter);
 routes.use("/home", middleCheckAuth, homeRouter);
 routes.use("/categorias", categoriaRouter);
-routes.use("/ordem-servicos", ordemServicoRouter);
+routes.use("/ordem-servicos", middleCheckAuth, ordemServicoRouter);
 routes.use("/servicos", middleCheckAuth, servicoRouter);
-routes.use("/cliente", clienteRouter);
+routes.use("/cliente", middleCheckAuth, clienteRouter);
 
 mapperRoutes(routes);
 

@@ -11,10 +11,8 @@ const middleCheckAuth = async (
   const con = database();
   const bearer = req.headers.authorization;
 
-  if (!bearer) {
-    resp.status(400).send(sendBodyFormatter("token inválido!"));
-    return;
-  }
+  if (!bearer)
+    return resp.status(400).send(sendBodyFormatter("token inválido!"));
 
   const chave = bearer.replace("Bearer ", "");
 
@@ -28,8 +26,7 @@ const middleCheckAuth = async (
   );
   await con.close();
   if (!result) {
-    resp.status(401).send(sendBodyFormatter("não autorizado"));
-    return;
+    return resp.status(401).send(sendBodyFormatter("não autorizado"));
   }
   next();
 };

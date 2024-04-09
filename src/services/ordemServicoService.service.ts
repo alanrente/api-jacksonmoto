@@ -10,7 +10,11 @@ import {
   IServico,
 } from "../interfaces/OrdemServico.interface";
 import { ServicoModel } from "../models/servico.model";
-import { InferAttributes, Op, Transaction, WhereOptions } from "sequelize";
+import sequelize, {
+  InferAttributes,
+  Transaction,
+  WhereOptions,
+} from "sequelize";
 import { ICliente, IOrdemServico } from "../interfaces/Models.interface";
 import { ClienteModel } from "../models/cliente.model";
 
@@ -79,6 +83,7 @@ export class OrdemServicoService extends Conection {
                 `${ServicoModel.getAttributes().valor.field}`,
               ],
             },
+
             required: true,
           },
         ],
