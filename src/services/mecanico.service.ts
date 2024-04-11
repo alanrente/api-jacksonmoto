@@ -1,6 +1,6 @@
 import conexao from "../infra/database";
 import { Sequelize } from "sequelize";
-import { ICategoriaModel } from "../models/categoria.model";
+import { CategoriaModel } from "../models/categoria.model";
 
 export class MecanicoService {
   private conection: Sequelize;
