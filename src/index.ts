@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
 
 app.use("/api", routes);
 
-const port = process.env.port;
+const port = process.env.PORT;
 
 app.listen(port, async () => {
   console.log(`http://localhost:${port}`);
