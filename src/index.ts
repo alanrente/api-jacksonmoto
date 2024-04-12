@@ -9,10 +9,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json({ message: "api jacksonmoto" });
-});
-
 app.use("/api", routes);
 
 const port = process.env.PORT;
