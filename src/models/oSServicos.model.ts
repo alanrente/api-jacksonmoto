@@ -15,6 +15,10 @@ const OsServicosModel = database().define<IOsServicos>(
       type: DataTypes.INTEGER,
       field: "ordem_servico_id",
     },
+    valor: {
+      type: DataTypes.DECIMAL(16, 2),
+      field: "valor_servico",
+    },
   },
   {
     tableName: "OS_SERVICOS_TB",
