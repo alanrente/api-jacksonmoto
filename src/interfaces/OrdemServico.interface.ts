@@ -1,5 +1,10 @@
+export interface ServicosRlOS {
+  idServico: number;
+  valor?: number;
+}
+
 export interface IOsServicoPost {
-  servicosId: number[];
+  servicosIdValor: ServicosRlOS[];
   mecanicoId: number;
   clienteId: number;
 }

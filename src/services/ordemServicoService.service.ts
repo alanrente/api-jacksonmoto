@@ -8,6 +8,7 @@ import {
   IOSMapper,
   IOsServicoPost,
   IServico,
+  ServicosRlOS,
 } from "../interfaces/OrdemServico.interface";
 import { ServicoModel } from "../models/servico.model";
 import sequelize, {
@@ -15,7 +16,11 @@ import sequelize, {
   Transaction,
   WhereOptions,
 } from "sequelize";
-import { ICliente, IOrdemServico } from "../interfaces/Models.interface";
+import {
+  ICliente,
+  IOrdemServico,
+  IServicoModel,
+} from "../interfaces/Models.interface";
 import { ClienteModel } from "../models/cliente.model";
 
 export class OrdemServicoService extends Conection {
@@ -125,23 +130,33 @@ export class OrdemServicoService extends Conection {
       });
       idsMecanicoAndServicos.clienteId = findOrCreateClienteByName.idCliente;
 
-      const servicosIds: number[] = [];
+      const servicosIds: ServicosRlOS[] = [];
       for await (const { servico, valor } of servicos) {
-        const [servicoToInclude] = await ServicoModel.findCreateFind({
-          where: { servico, valor: Number(valor) },
-          transaction: transacao,
+        const servicoFinded = await ServicoModel.findOne({
+          where: { servico },
         });
 
-        servicosIds.push(servicoToInclude.idServico);
+        let servicoToInclude = servicoFinded;
+
+        if (!servicoToInclude) {
+          servicoToInclude = await ServicoModel.create({
+            servico,
+            valor: +valor,
+          });
+        }
+
+        servicosIds.push({
+          idServico: servicoToInclude.idServico,
+          valor: +valor,
+        });
       }
-      idsMecanicoAndServicos.servicosId = servicosIds;
+      idsMecanicoAndServicos.servicosIdValor = servicosIds;
 
       return await this.createOSServico({
         iOsServicoPost: idsMecanicoAndServicos,
         transaction: transacao,
       });
     } catch (error: any) {
-      await transacao.rollback();
       throw new Error(error.message);
     }
   }
@@ -167,11 +182,12 @@ export class OrdemServicoService extends Conection {
         { transaction: transacao }
       );
 
-      for await (let id of iOsServicoPost.servicosId) {
+      for await (let id of iOsServicoPost.servicosIdValor) {
         await OsServicosModel.create(
           {
             OrdemServicoId: ordemServicoCriada.idOrdemServico,
-            ServicoId: id,
+            ServicoId: id.idServico,
+            valor: id.valor,
           },
           { transaction: transacao }
         );
