@@ -42,7 +42,7 @@ export interface IOsServicos
   > {
   ServicoId: number;
   OrdemServicoId: number;
-  valor: number;
+  valor?: number;
 }
 
 export interface IServicoModel
