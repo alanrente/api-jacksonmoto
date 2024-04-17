@@ -88,8 +88,6 @@ export class OrdemServicoService extends Conection {
                 `${ServicoModel.getAttributes().valor.field}`,
               ],
             },
-
-            required: true,
           },
         ],
       });
