@@ -7,6 +7,7 @@ import middleCheckAuth from "../middlewares/middleCheckAuth";
 import authRouter from "./auth.router";
 import mapperRoutes from "../utils/mapperRoutes.util";
 import clienteRouter from "./cliente.router";
+import mecanicoRouter from "./mecanico.router";
 
 const routes = Router();
 
@@ -20,6 +21,7 @@ routes.use("/categorias", categoriaRouter);
 routes.use("/ordem-servicos", middleCheckAuth, ordemServicoRouter);
 routes.use("/servicos", middleCheckAuth, servicoRouter);
 routes.use("/cliente", middleCheckAuth, clienteRouter);
+routes.use("/mecanico", middleCheckAuth, mecanicoRouter);
 
 mapperRoutes(routes);
 

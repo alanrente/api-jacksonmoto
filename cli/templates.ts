@@ -30,7 +30,7 @@ export default ${this.recurso}Router;`;
   templateService(): string {
     return `import conexao from "../infra/database";
 import { Sequelize } from "sequelize";
-// import { ${this.Recurso}Model } from "../models/${this.Recurso}Model";
+// import { ${this.Recurso}Model } from "../models/${this.recurso}.model";
 
 export class ${this.Recurso}Service {
   private conection: Sequelize;

@@ -1,21 +1,19 @@
 import conexao from "../infra/database";
 import { Sequelize } from "sequelize";
-import { CategoriaModel } from "../models/categoria.model";
+import { MecanicoModel } from "../models/mecanico.model";
 
 export class MecanicoService {
   private conection: Sequelize;
-  private categoriaModel: typeof CategoriaModel;
+  private mecanicoModel: typeof MecanicoModel;
 
   constructor() {
     this.conection = conexao();
-    this.categoriaModel = CategoriaModel;
+    this.mecanicoModel = MecanicoModel;
   }
 
   async getAll() {
-    const categorias = await this.categoriaModel.findAll({
-      attributes: { exclude: ["createdAt", "updatedAt"] },
-    });
+    const mecanicos = await this.mecanicoModel.findAll();
     await this.conection.close();
-    return categorias;
+    return mecanicos;
   }
 }
