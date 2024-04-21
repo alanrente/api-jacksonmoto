@@ -1,10 +1,10 @@
-export interface ServicosRlOS {
+export interface ServicosRelationOS {
   idServico: number;
   valor?: number;
 }
 
 export interface IOsServicoPost {
-  servicosIdValor: ServicosRlOS[];
+  servicosIdValor: ServicosRelationOS[];
   mecanicoId: number;
   clienteId: number;
 }
@@ -32,3 +32,8 @@ export interface IOSMapper {
   totalOS: number;
   totalMecanico: number;
 }
+
+export type ServicosAddOs = {
+  servicos: IServico[];
+  idOrdemServico: number;
+};

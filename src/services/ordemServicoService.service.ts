@@ -8,20 +8,14 @@ import {
   IOSMapper,
   IOsServicoPost,
   IServico,
-  ServicosRlOS,
+  ServicosAddOs,
+  ServicosRelationOS,
 } from "../interfaces/OrdemServico.interface";
 import { ServicoModel } from "../models/servico.model";
-import sequelize, {
-  InferAttributes,
-  Transaction,
-  WhereOptions,
-} from "sequelize";
-import {
-  ICliente,
-  IOrdemServico,
-  IServicoModel,
-} from "../interfaces/Models.interface";
+import { InferAttributes, Op, Transaction, WhereOptions } from "sequelize";
+import { ICliente, IOrdemServico } from "../interfaces/Models.interface";
 import { ClienteModel } from "../models/cliente.model";
+import { ServicoService } from "./servico.service";
 
 export class OrdemServicoService extends Conection {
   constructor() {
@@ -128,7 +122,7 @@ export class OrdemServicoService extends Conection {
       });
       idsMecanicoAndServicos.clienteId = findOrCreateClienteByName.idCliente;
 
-      const servicosIds: ServicosRlOS[] = [];
+      const servicosIds: ServicosRelationOS[] = [];
       for await (const { servico, valor } of servicos) {
         const servicoFinded = await ServicoModel.findOne({
           where: { servico },
@@ -150,7 +144,7 @@ export class OrdemServicoService extends Conection {
       }
       idsMecanicoAndServicos.servicosIdValor = servicosIds;
 
-      return await this.createOSServico({
+      return await this.createOSWithMecanicoClienteServicos({
         iOsServicoPost: idsMecanicoAndServicos,
         transaction: transacao,
       });
@@ -159,7 +153,7 @@ export class OrdemServicoService extends Conection {
     }
   }
 
-  private async createOSServico({
+  private async createOSWithMecanicoClienteServicos({
     iOsServicoPost,
     transaction,
   }: {
@@ -199,5 +193,64 @@ export class OrdemServicoService extends Conection {
       await this.closeConection();
       throw new Error(error);
     }
+  }
+
+  async addServicosInOs({ idOrdemServico, servicos }: ServicosAddOs) {
+    /*
+    buscar todos os serviços que existem com os servicos recebidos
+    cria uma lista de servicos recebidos com id dos servicos encontrados
+    cria uma lista de servicos não encontrados
+    se servicos não encontrados for maior que 0 cria os servicos não encontrados e substitui a lista de servicos não encontrados pelos novos servicos
+    cria uma lista com todos os servicos mapeados para incluir na ordem de servico
+    inclui servicos na ordem de servico
+    */
+    const servicosFinded = await ServicoModel.findAll({
+      where: {
+        servico: {
+          [Op.in]: servicos.map((ser) => ser.servico),
+        },
+      },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "valor"],
+      },
+    });
+
+    const servicosWithIdFromServicosFinded = servicos
+      .filter((ser) =>
+        servicosFinded.map(({ servico }) => servico).includes(ser.servico)
+      )
+      .map(({ servico, valor }) => ({
+        idServico: servicosFinded.find(
+          (servicoFind) => servicoFind.servico === servico
+        )?.idServico,
+        valor,
+      }));
+
+    let servicosNotFinded = servicos.filter(
+      (serv) =>
+        !servicosFinded.map(({ servico }) => servico).includes(serv.servico)
+    );
+
+    if (servicosNotFinded.length > 0) {
+      servicosNotFinded = await new ServicoService(this.conection).createMany(
+        servicosNotFinded
+      );
+    }
+
+    const allServicosMappedWithOrdemServicoId = [
+      ...servicosWithIdFromServicosFinded,
+      ...servicosNotFinded,
+    ].map(({ valor, idServico }) => ({
+      valor: +valor,
+      ServicoId: Number(idServico),
+      OrdemServicoId: idOrdemServico,
+    }));
+
+    const addServicosInOs = await OsServicosModel.bulkCreate(
+      allServicosMappedWithOrdemServicoId
+    );
+    await this.closeConection();
+
+    return addServicosInOs;
   }
 }

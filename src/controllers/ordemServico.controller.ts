@@ -42,4 +42,13 @@ export const OrdemServicoController = {
       return res.status(500).send(sendBodyFormatter(error.message));
     }
   },
+
+  async addServicosInOs(req: Request, res: Response) {
+    try {
+      await new OrdemServicoService().addServicosInOs(req.body);
+      res.send();
+    } catch (error: any) {
+      res.status(500).send(sendBodyFormatter(error.message));
+    }
+  },
 };

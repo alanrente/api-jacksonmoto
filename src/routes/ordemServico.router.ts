@@ -8,5 +8,9 @@ ordemServicoRouter.post(
   "/",
   OrdemServicoController.createOSWithServicosMecanicoAndCliente
 );
+ordemServicoRouter.post(
+  "/adicionar-servicos-os",
+  OrdemServicoController.addServicosInOs
+);
 
 export default ordemServicoRouter;
