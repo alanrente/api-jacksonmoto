@@ -4,6 +4,9 @@ import { OrdemServicoController } from "../controllers/ordemServico.controller";
 const ordemServicoRouter = Router();
 
 ordemServicoRouter.get("/", OrdemServicoController.getAll);
-ordemServicoRouter.post("/", OrdemServicoController.create);
+ordemServicoRouter.post(
+  "/",
+  OrdemServicoController.createServicoOSMecanicoAndCliente
+);
 
 export default ordemServicoRouter;
