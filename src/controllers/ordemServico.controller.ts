@@ -28,7 +28,7 @@ export const OrdemServicoController = {
     }
   },
 
-  async createServicoOSMecanicoAndCliente(req: Request, res: Response) {
+  async createOSWithServicosMecanicoAndCliente(req: Request, res: Response) {
     try {
       const body = req.body as {
         servicos: IServico[];

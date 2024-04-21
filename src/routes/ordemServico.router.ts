@@ -6,7 +6,7 @@ const ordemServicoRouter = Router();
 ordemServicoRouter.get("/", OrdemServicoController.getAll);
 ordemServicoRouter.post(
   "/",
-  OrdemServicoController.createServicoOSMecanicoAndCliente
+  OrdemServicoController.createOSWithServicosMecanicoAndCliente
 );
 
 export default ordemServicoRouter;
