@@ -204,7 +204,7 @@ export class OrdemServicoService extends Conection {
     }
   }
 
-  async addServicosInOs({ idOrdemServico, servicos }: ServicosAddOs) {
+  async addServicosInOs({ idOrdemServico, servicos, usuario }: ServicosAddOs) {
     /*
     buscar todos os serviços que existem com os servicos recebidos
     cria uma lista de servicos recebidos com id dos servicos encontrados
@@ -215,6 +215,7 @@ export class OrdemServicoService extends Conection {
     */
     const servicosFinded = await ServicoModel.findAll({
       where: {
+        usuario: usuario,
         servico: {
           [Op.in]: servicos.map((ser) => ser.servico),
         },
@@ -242,7 +243,8 @@ export class OrdemServicoService extends Conection {
 
     if (servicosNotFinded.length > 0) {
       servicosNotFinded = await new ServicoService(this.conection).createMany(
-        servicosNotFinded
+        servicosNotFinded,
+        usuario!
       );
     }
 
@@ -253,6 +255,7 @@ export class OrdemServicoService extends Conection {
       valor: +valor,
       ServicoId: Number(idServico),
       OrdemServicoId: idOrdemServico,
+      usuario,
     }));
 
     const addServicosInOs = await OsServicosModel.bulkCreate(

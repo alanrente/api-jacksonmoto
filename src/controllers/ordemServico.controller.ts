@@ -48,6 +48,9 @@ export const OrdemServicoController = {
 
   async addServicosInOs(req: Request, res: Response) {
     try {
+      const { user } = new MyCipher().myTokenAsUser(req.headers.authorization!);
+      req.body = { ...req.body, usuario: user };
+
       await new OrdemServicoService().addServicosInOs(req.body);
       res.send();
     } catch (error: any) {

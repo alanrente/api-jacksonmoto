@@ -21,12 +21,13 @@ export class ServicoService extends Conection {
     return categorias;
   }
 
-  async createMany(servicos: IServico[]) {
+  async createMany(servicos: IServico[], usuario: string) {
     if (servicos.length == 0) return servicos;
 
     const mapServicosWithoutId = servicos.map(({ servico, valor }) => ({
       servico,
       valor: +valor,
+      usuario,
     }));
     const servicosCreated = await this.servicoModel.bulkCreate(
       mapServicosWithoutId
