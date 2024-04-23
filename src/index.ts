@@ -6,7 +6,7 @@ import routes from "./routes";
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: "https://appjacksonmoto.vercel.app/" }));
 app.use(express.json());
 
 app.use("/api", routes);
