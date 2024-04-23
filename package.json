@@ -13,6 +13,10 @@
     "build": "tsc -p tsconfig.json",
     "resource": "npx ts-node cli"
   },
+  "repository": {
+    "type": "private",
+    "url": "https://github.com/alanrente/api-jacksonmoto"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
