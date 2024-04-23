@@ -6,10 +6,7 @@ import routes from "./routes";
 
 const app = express();
 
-const enableds = [
-  "https://appjacksonmoto.vercel.app/",
-  "http://localhost:3005",
-];
+const enableds = ["https://appjacksonmoto.vercel.app", "http://localhost:3005"];
 
 app.use(
   cors({
