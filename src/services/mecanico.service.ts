@@ -11,8 +11,12 @@ export class MecanicoService {
     this.mecanicoModel = MecanicoModel;
   }
 
-  async getAll() {
-    const mecanicos = await this.mecanicoModel.findAll();
+  async getAll(user: string) {
+    const mecanicos = await this.mecanicoModel.findAll({
+      where: {
+        usuario: user,
+      },
+    });
     await this.conection.close();
     return mecanicos;
   }

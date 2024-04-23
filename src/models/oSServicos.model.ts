@@ -19,6 +19,10 @@ const OsServicosModel = database().define<IOsServicos>(
       type: DataTypes.DECIMAL(16, 2),
       field: "valor_servico",
     },
+    usuario: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
     tableName: "OS_SERVICOS_TB",

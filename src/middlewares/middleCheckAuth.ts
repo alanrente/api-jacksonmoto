@@ -18,7 +18,7 @@ const middleCheckAuth = async (
 
   const encryptedToken = bearer.replace("Bearer ", "");
 
-  const { chave } = new MyCipher().myTokenAsUser(encryptedToken);
+  const { chave, user } = new MyCipher().myTokenAsUser(encryptedToken);
 
   const [result] = await con.query<User>(
     "select * from jackson_moto_db.usuario_tb where chave = $chave limit 1",
@@ -29,6 +29,7 @@ const middleCheckAuth = async (
   );
 
   await con.close();
+
   if (!result || chave !== result.chave) {
     return resp.status(401).send(sendBodyFormatter("não autorizado"));
   }

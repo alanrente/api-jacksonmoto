@@ -15,6 +15,10 @@ const MecanicoModel = sequelize.define<IMecanicoModel>(
     nome: {
       type: DataTypes.STRING,
     },
+    usuario: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
     tableName: "MECANICO_TB",

@@ -56,11 +56,12 @@ export class OrdemServicoService extends Conection {
     return somarOS ? { ordensServicos, totaisOs } : { ordensServicos };
   }
 
-  async getAll(mecanicoId?: number, clienteId?: number) {
+  async getAll(user: string, mecanicoId?: number, clienteId?: number) {
     try {
       const condition: WhereOptions<InferAttributes<IOrdemServico>> = {
         mecanicoId,
         clienteId,
+        usuario: user,
       };
 
       if (!mecanicoId) delete condition.mecanicoId;
@@ -100,24 +101,29 @@ export class OrdemServicoService extends Conection {
     mecanico,
     servicos,
     cliente,
+    user,
   }: {
     mecanico: string;
     servicos: IServico[];
     cliente: ICliente;
+    user: string;
   }) {
+    console.log(user);
+
     const transacao = await this.conection.transaction();
     try {
       const idsMecanicoAndServicos = {} as IOsServicoPost;
+      idsMecanicoAndServicos.user = user;
 
       const [findOrCreateMecanicoByName] = await MecanicoModel.findCreateFind({
-        where: { nome: mecanico },
+        where: { nome: mecanico, usuario: user },
         transaction: transacao,
       });
       idsMecanicoAndServicos.mecanicoId = findOrCreateMecanicoByName.idMecanico;
 
       const { contato, nome, placa } = cliente;
       const [findOrCreateClienteByName] = await ClienteModel.findCreateFind({
-        where: { contato, nome, placa },
+        where: { contato, nome, placa, usuario: user },
         transaction: transacao,
       });
       idsMecanicoAndServicos.clienteId = findOrCreateClienteByName.idCliente;
@@ -134,6 +140,7 @@ export class OrdemServicoService extends Conection {
           servicoToInclude = await ServicoModel.create({
             servico,
             valor: +valor,
+            usuario: user,
           });
         }
 
@@ -170,6 +177,7 @@ export class OrdemServicoService extends Conection {
           dataExecucao,
           mecanicoId: iOsServicoPost.mecanicoId,
           clienteId: iOsServicoPost.clienteId,
+          usuario: iOsServicoPost.user,
         },
         { transaction: transacao }
       );
@@ -180,6 +188,7 @@ export class OrdemServicoService extends Conection {
             OrdemServicoId: ordemServicoCriada.idOrdemServico,
             ServicoId: id.idServico,
             valor: id.valor,
+            usuario: iOsServicoPost.user,
           },
           { transaction: transacao }
         );

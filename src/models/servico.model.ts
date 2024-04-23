@@ -20,6 +20,10 @@ const ServicoModel = sequelize.define<IServicoModel>(
       type: DataTypes.DECIMAL(16, 2),
       allowNull: false,
     },
+    usuario: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
     defaultScope: {

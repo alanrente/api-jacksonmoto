@@ -16,6 +16,7 @@ export const ClienteModel = sequelize.define<ICliente>(
     nome: { type: DataTypes.STRING, field: "nome" },
     placa: { type: DataTypes.STRING(10), field: "placa" },
     contato: { type: DataTypes.STRING, field: "contato" },
+    usuario: { type: DataTypes.STRING, allowNull: false },
   },
   {
     tableName: "CLIENTE_TB",

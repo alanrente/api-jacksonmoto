@@ -3,6 +3,7 @@ import sendBodyFormatter from "../utils/sendBodyFormatter";
 import { OrdemServicoService } from "../services/ordemServicoService.service";
 import { IServico } from "../interfaces/OrdemServico.interface";
 import { ICliente } from "../interfaces/Models.interface";
+import MyCipher from "../utils/crypto.util";
 
 export const OrdemServicoController = {
   async getAll(req: Request, res: Response) {
@@ -12,14 +13,10 @@ export const OrdemServicoController = {
         clienteId: string;
       };
       const result = await new OrdemServicoService().getAll(
+        new MyCipher().myTokenAsUser(`${req.headers.authorization}`).user,
         +mecanicoId,
         +clienteId
       );
-
-      if (result.length == 0)
-        return res
-          .status(404)
-          .send(sendBodyFormatter("nenhum registro encontrado"));
 
       return res.send(sendBodyFormatter(result, "body"));
     } catch (error: any) {
@@ -34,7 +31,13 @@ export const OrdemServicoController = {
         servicos: IServico[];
         mecanico: string;
         cliente: ICliente;
+        user: string;
       };
+
+      body.user = new MyCipher().myTokenAsUser(
+        `${req.headers.authorization}`
+      ).user;
+
       const result = await new OrdemServicoService().create(body);
       return res.send(sendBodyFormatter(result, "body"));
     } catch (error: any) {

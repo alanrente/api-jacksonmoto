@@ -13,14 +13,19 @@ const enableds = [
 
 app.use(
   cors({
-    origin: (origin, call) => {
-      if (!origin) return call(new Error("Não existe origem"));
-      if (enableds.indexOf(origin) !== -1) {
-        call(null, true);
-      } else {
-        call(new Error("Not allowed by CORS"));
-      }
-    },
+    origin:
+      process.env.NODE_ENV == "development"
+        ? "*"
+        : (origin, call) => {
+            console.log("origin", origin);
+
+            if (!origin) return call(new Error("Não existe origem"));
+            if (enableds.indexOf(origin) !== -1) {
+              call(null, true);
+            } else {
+              call(new Error("Not allowed by CORS"));
+            }
+          },
   })
 );
 app.use(express.json());

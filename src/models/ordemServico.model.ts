@@ -23,6 +23,10 @@ const OrdemServicoModel = sequelize.define<IOrdemServico>(
       allowNull: false,
     },
     clienteId: { type: DataTypes.INTEGER, allowNull: true },
+    usuario: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
     tableName: "ORDEM_SERVICO_TB",

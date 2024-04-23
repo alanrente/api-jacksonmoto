@@ -11,8 +11,10 @@ export class ClienteService extends Conection {
     this.clienteModel = ClienteModel;
   }
 
-  async getAll() {
-    const clientes = await this.clienteModel.findAll();
+  async getAll(usuario: string) {
+    const clientes = await this.clienteModel.findAll({
+      where: { usuario },
+    });
     await this.closeConection();
     return clientes;
   }

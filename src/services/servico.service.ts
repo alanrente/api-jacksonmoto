@@ -12,8 +12,9 @@ export class ServicoService extends Conection {
     this.servicoModel = ServicoModel;
   }
 
-  async getAll() {
+  async getAll(usuario: string) {
     const categorias = await this.servicoModel.findAll({
+      where: { usuario },
       attributes: { exclude: ["createdAt", "updatedAt"] },
     });
     await this.closeConection();

@@ -1,3 +1,5 @@
+import { Usuario } from "./Models.interface";
+
 export interface ServicosRelationOS {
   idServico: number;
   valor?: number;
@@ -7,6 +9,7 @@ export interface IOsServicoPost {
   servicosIdValor: ServicosRelationOS[];
   mecanicoId: number;
   clienteId: number;
+  user: string;
 }
 
 export interface IServico {
@@ -33,7 +36,7 @@ export interface IOSMapper {
   totalMecanico: number;
 }
 
-export type ServicosAddOs = {
+export type ServicosAddOs = Usuario & {
   servicos: IServico[];
   idOrdemServico: number;
 };
