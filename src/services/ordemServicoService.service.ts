@@ -69,6 +69,7 @@ export class OrdemServicoService extends Conection {
 
       const ordensServicos = await OrdemServicoModel.findAll({
         where: condition,
+        order: [["dataExecucao", "desc"]],
         include: [
           {
             model: MecanicoModel,
