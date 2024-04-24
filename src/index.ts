@@ -6,23 +6,24 @@ import routes from "./routes";
 
 const app = express();
 
-const enableds = ["https://appjacksonmoto.vercel.app", "http://localhost:3005"];
+const enableds = ["https://appjacksonmoto.vercel.app"];
 
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV == "development"
-        ? "*"
-        : (origin, call) => {
-            console.log("origin", origin);
+    origin: (origin, call) => {
+      console.log("origin", origin);
 
-            if (!origin) return call(new Error("Não existe origem"));
-            if (enableds.indexOf(origin) !== -1) {
-              call(null, true);
-            } else {
-              call(new Error("Not allowed by CORS"));
-            }
-          },
+      if (!origin && process.env.NODE_ENV != "development")
+        return call(new Error("Não existe origem"));
+      if (
+        enableds.indexOf(origin!) !== -1 ||
+        process.env.NODE_ENV == "development"
+      ) {
+        call(null, true);
+      } else {
+        call(new Error("Not allowed by CORS"));
+      }
+    },
   })
 );
 app.use(express.json());
