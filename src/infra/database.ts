@@ -1,4 +1,5 @@
 import { Sequelize } from "sequelize";
+import * as pg from "pg";
 
 const { database, username, password, host } = {
   database: `${process.env.DB_DATABASE}`,
@@ -19,6 +20,7 @@ export default () => {
       schema: process.env.DB_SCHEMA,
       timezone: "-03:00",
       logging: process.env.NODE_ENV == "development" ? loggerQuery : false,
+      dialectModule: pg,
     });
     console.log("banco conectado!");
     return sequelize;
