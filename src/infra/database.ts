@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import * as pg from "pg";
+import pg from "pg";
 
 const { database, username, password, host } = {
   database: `${process.env.DB_DATABASE}`,
