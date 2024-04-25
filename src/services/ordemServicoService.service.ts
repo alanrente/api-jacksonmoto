@@ -214,56 +214,67 @@ export class OrdemServicoService extends Conection {
     cria uma lista com todos os servicos mapeados para incluir na ordem de servico
     inclui servicos na ordem de servico
     */
-    const servicosFinded = await ServicoModel.findAll({
-      where: {
-        usuario: usuario,
-        servico: {
-          [Op.in]: servicos.map((ser) => ser.servico),
-        },
-      },
-      attributes: {
-        exclude: ["createdAt", "updatedAt", "valor"],
-      },
-    });
 
-    const servicosWithIdFromServicosFinded = servicos
-      .filter((ser) =>
-        servicosFinded.map(({ servico }) => servico).includes(ser.servico)
-      )
-      .map(({ servico, valor }) => ({
-        idServico: servicosFinded.find(
-          (servicoFind) => servicoFind.servico === servico
-        )?.idServico,
-        valor,
+    const transacao = await this.conection.transaction();
+
+    try {
+      const servicosFinded = await ServicoModel.findAll({
+        where: {
+          usuario: usuario,
+          servico: {
+            [Op.in]: servicos.map((ser) => ser.servico),
+          },
+        },
+        attributes: {
+          exclude: ["createdAt", "updatedAt", "valor"],
+        },
+        transaction: transacao,
+      });
+
+      const servicosWithIdFromServicosFinded = servicos
+        .filter((ser) =>
+          servicosFinded.map(({ servico }) => servico).includes(ser.servico)
+        )
+        .map(({ servico, valor }) => ({
+          idServico: servicosFinded.find(
+            (servicoFind) => servicoFind.servico === servico
+          )?.idServico,
+          valor,
+        }));
+
+      let servicosNotFinded = servicos.filter(
+        (serv) =>
+          !servicosFinded.map(({ servico }) => servico).includes(serv.servico)
+      );
+
+      if (servicosNotFinded.length > 0) {
+        servicosNotFinded = await new ServicoService(this.conection).createMany(
+          servicosNotFinded,
+          usuario!
+        );
+      }
+
+      const allServicosMappedWithOrdemServicoId = [
+        ...servicosWithIdFromServicosFinded,
+        ...servicosNotFinded,
+      ].map(({ valor, idServico }) => ({
+        valor: +valor,
+        ServicoId: Number(idServico),
+        OrdemServicoId: idOrdemServico,
+        usuario,
       }));
 
-    let servicosNotFinded = servicos.filter(
-      (serv) =>
-        !servicosFinded.map(({ servico }) => servico).includes(serv.servico)
-    );
-
-    if (servicosNotFinded.length > 0) {
-      servicosNotFinded = await new ServicoService(this.conection).createMany(
-        servicosNotFinded,
-        usuario!
+      const addServicosInOs = await OsServicosModel.bulkCreate(
+        allServicosMappedWithOrdemServicoId,
+        { transaction: transacao }
       );
+      await transacao.commit();
+      await this.closeConection();
+
+      return addServicosInOs;
+    } catch (error) {
+      await transacao.rollback();
+      throw error;
     }
-
-    const allServicosMappedWithOrdemServicoId = [
-      ...servicosWithIdFromServicosFinded,
-      ...servicosNotFinded,
-    ].map(({ valor, idServico }) => ({
-      valor: +valor,
-      ServicoId: Number(idServico),
-      OrdemServicoId: idOrdemServico,
-      usuario,
-    }));
-
-    const addServicosInOs = await OsServicosModel.bulkCreate(
-      allServicosMappedWithOrdemServicoId
-    );
-    await this.closeConection();
-
-    return addServicosInOs;
   }
 }
