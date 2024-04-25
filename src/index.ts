@@ -6,25 +6,26 @@ import routes from "./routes";
 
 const app = express();
 
-const enableds = ["https://appjacksonmoto.vercel.app"];
+// const enableds = ["https://appjacksonmoto.vercel.app"];
 
 app.use(
-  cors({
-    origin: (origin, call) => {
-      console.log("origin", origin);
+  cors()
+  // cors({
+  //   origin: (origin, call) => {
+  //     console.log("origin", origin);
 
-      if (!origin && process.env.NODE_ENV != "development")
-        return call(new Error("Não existe origem"));
-      if (
-        enableds.indexOf(origin!) !== -1 ||
-        process.env.NODE_ENV == "development"
-      ) {
-        call(null, true);
-      } else {
-        call(new Error("Not allowed by CORS"));
-      }
-    },
-  })
+  //     if (!origin && process.env.NODE_ENV != "development")
+  //       return call(new Error("Não existe origem"));
+  //     if (
+  //       enableds.indexOf(origin!) !== -1 ||
+  //       process.env.NODE_ENV == "development"
+  //     ) {
+  //       call(null, true);
+  //     } else {
+  //       call(new Error("Not allowed by CORS"));
+  //     }
+  //   },
+  // })
 );
 app.use(express.json());
 
