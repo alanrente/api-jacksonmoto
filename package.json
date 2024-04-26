@@ -12,7 +12,7 @@
     "start": "node ./dist/index.js",
     "build": "tsc -p tsconfig.json",
     "resource": "npx ts-node cli",
-    "deploy": "npx vercel deploy --prod"
+    "deploy": "npm run build && npx vercel deploy --prod"
   },
   "repository": {
     "type": "private",
