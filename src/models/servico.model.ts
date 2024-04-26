@@ -20,6 +20,11 @@ const ServicoModel = sequelize.define<IServicoModel>(
       type: DataTypes.DECIMAL(16, 2),
       allowNull: false,
     },
+    porcentagem: {
+      type: DataTypes.DECIMAL(16, 2),
+      allowNull: false,
+      defaultValue: 1,
+    },
     usuario: {
       type: DataTypes.STRING,
       allowNull: false,

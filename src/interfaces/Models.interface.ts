@@ -60,6 +60,8 @@ export interface IServicoModel
   idServico: CreationOptional<number>;
   servico: string;
   valor: number;
+  porcentagem?: CreationOptional<number>;
+  valorPorcentagem?: number;
 }
 
 export interface IMecanicoModel

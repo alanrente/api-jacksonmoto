@@ -16,6 +16,8 @@ export interface IServico {
   idServico?: number;
   servico: string;
   valor: number | string;
+  porcentagem?: number;
+  valorPorcentagem?: number;
 }
 
 export interface IMecanico {

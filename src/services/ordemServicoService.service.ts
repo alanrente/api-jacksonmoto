@@ -26,6 +26,7 @@ import {
   ICliente,
   IMecanicoModel,
   IOrdemServico,
+  IServicoModel,
 } from "../interfaces/Models.interface";
 import { ClienteModel } from "../models/cliente.model";
 import { ServicoService } from "./servico.service";
@@ -41,11 +42,22 @@ export class OrdemServicoService extends Conection {
         const totalOs =
           servicos.length > 1
             ? servicos
-                .map((servico: IServico) => Number(servico.valor))
+                .map((servico: IServicoModel) =>
+                  Number(servico.dataValues.valor)
+                )
                 .reduce((a: number, b: number) => {
                   return a + b;
                 })
             : Number(servicos[0].valor);
+
+        const totalMecanico =
+          servicos.length > 1
+            ? servicos
+                .map((servico: IServicoModel) =>
+                  Number(servico.dataValues.valorPorcentagem)
+                )
+                .reduce((a: number, b: number) => a + b)
+            : Number(servicos[0].valorPorcentagem);
 
         return {
           ...dataValues,
@@ -53,7 +65,7 @@ export class OrdemServicoService extends Conection {
           servicos: [...servicos.map((model: any) => model.dataValues)],
           cliente: { ...cliente.dataValues },
           totalOs,
-          totalMecanico: Number(totalOs) / 2,
+          totalMecanico,
         };
       }
     );
@@ -107,6 +119,14 @@ export class OrdemServicoService extends Conection {
           {
             model: ServicoModel,
             required: true,
+            attributes: {
+              include: [
+                [
+                  this.conection.literal("(valor * porcentagem)"),
+                  "valorPorcentagem",
+                ],
+              ],
+            },
           },
         ],
       });
@@ -134,8 +154,6 @@ export class OrdemServicoService extends Conection {
     cliente: ICliente;
     user: string;
   }) {
-    console.log(user);
-
     const transacao = await this.conection.transaction();
     try {
       const idsMecanicoAndServicos = {} as IOsServicoPost;
