@@ -21,6 +21,8 @@ const MecanicoModel = sequelize.define<IMecanicoModel>(
     },
   },
   {
+    createdAt: false,
+    updatedAt: false,
     tableName: "MECANICO_TB",
     defaultScope: {
       order: ["idMecanico"],

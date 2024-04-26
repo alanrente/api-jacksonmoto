@@ -31,6 +31,8 @@ const ServicoModel = sequelize.define<IServicoModel>(
     },
   },
   {
+    createdAt: false,
+    updatedAt: false,
     defaultScope: {
       order: ["idServico"],
     },

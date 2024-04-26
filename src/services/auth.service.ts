@@ -21,7 +21,7 @@ export class AuthService extends Conection {
   }) {
     try {
       const [result] = await this.conection.query<User>(
-        "select * from jackson_moto_db.usuario_tb where usuario = $username and senha = $pass limit 1",
+        "select * from usuario_tb where usuario = $username and senha = $pass limit 1",
         {
           bind: { username, pass },
           type: Sequelize.QueryTypes.SELECT,

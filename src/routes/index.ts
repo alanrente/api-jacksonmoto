@@ -1,6 +1,5 @@
 import { Router } from "express";
 import homeRouter from "./home.router";
-import categoriaRouter from "./categoria.router";
 import ordemServicoRouter from "./ordemServico.router";
 import servicoRouter from "./servico.router";
 import middleCheckAuth from "../middlewares/middleCheckAuth";
@@ -17,7 +16,6 @@ routes.get("/", (req, res) => {
 
 routes.use("/auth", authRouter);
 routes.use("/home", middleCheckAuth, homeRouter);
-routes.use("/categorias", categoriaRouter);
 routes.use("/ordem-servicos", middleCheckAuth, ordemServicoRouter);
 routes.use("/servicos", middleCheckAuth, servicoRouter);
 routes.use("/cliente", middleCheckAuth, clienteRouter);

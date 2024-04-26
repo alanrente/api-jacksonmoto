@@ -21,7 +21,7 @@ const middleCheckAuth = async (
   const { chave, user } = new MyCipher().myTokenAsUser(encryptedToken);
 
   const [result] = await con.query<User>(
-    "select * from jackson_moto_db.usuario_tb where chave = $chave limit 1",
+    "select * from usuario_tb where chave = $chave limit 1",
     {
       bind: { chave: chave },
       type: Sequelize.QueryTypes.SELECT,
