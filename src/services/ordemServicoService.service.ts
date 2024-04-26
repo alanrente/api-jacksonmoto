@@ -5,6 +5,7 @@ import { MecanicoModel } from "../models/mecanico.model";
 import { OsServicosModel } from "../models/oSServicos.model";
 import { OrdemServicoModel } from "../models/ordemServico.model";
 import {
+  IMecanico,
   IOSMapper,
   IOsServicoPost,
   IServico,
@@ -12,8 +13,20 @@ import {
   ServicosRelationOS,
 } from "../interfaces/OrdemServico.interface";
 import { ServicoModel } from "../models/servico.model";
-import { InferAttributes, Op, Transaction, WhereOptions } from "sequelize";
-import { ICliente, IOrdemServico } from "../interfaces/Models.interface";
+import {
+  IncludeOptions,
+  Includeable,
+  InferAttributes,
+  Op,
+  Sequelize,
+  Transaction,
+  WhereOptions,
+} from "sequelize";
+import {
+  ICliente,
+  IMecanicoModel,
+  IOrdemServico,
+} from "../interfaces/Models.interface";
 import { ClienteModel } from "../models/cliente.model";
 import { ServicoService } from "./servico.service";
 
@@ -22,53 +35,68 @@ export class OrdemServicoService extends Conection {
     super(conexao());
   }
 
-  private mapperGetAll(ordemServico: any[], somarOS?: boolean) {
-    const ordensServicos = ordemServico.map((os) => {
-      const retorno = {} as IOSMapper;
-      retorno.idOrdemServico = os.idOrdemServico;
-      retorno["dataExecucao"] = os.dataExecucao;
-      retorno.idMecanico = os.mecanico.idMecanico;
-      retorno.nomeMecanico = os.mecanico.nome;
-      retorno.idCliente = os.ClienteModel.idCliente;
-      retorno.nomeCliente = os.ClienteModel.nome;
-      retorno.placa = os.ClienteModel.placa;
-      retorno.contato = os.ClienteModel.contato;
-      retorno.servicos = os.servicos.map((servico: IServico) => ({
-        idServico: servico.idServico,
-        servico: servico.servico,
-        valor: servico.valor,
-      }));
-      retorno.totalOS =
-        os.servicos.length > 1
-          ? os.servicos.reduce(
-              (servA: IServico, servB: IServico) =>
-                Number(servA.valor) + Number(servB.valor)
-            )
-          : Number(os.servicos[0].valor);
-      retorno.totalMecanico = Number(retorno.totalOS) / 2;
-      return retorno;
-    });
-    const totaisOs: any =
-      ordensServicos.length > 1
-        ? ordensServicos.map((a) => a.totalOS).reduce((a, b) => a + b)
-        : ordensServicos[0].totalOS;
+  private mapperGetAll(ordemServico: any[]) {
+    const ordensServicos: any = ordemServico.map(
+      ({ dataValues, servicos, mecanico, cliente }) => {
+        const totalOs =
+          servicos.length > 1
+            ? servicos
+                .map((servico: IServico) => Number(servico.valor))
+                .reduce((a: number, b: number) => {
+                  return a + b;
+                })
+            : Number(servicos[0].valor);
 
-    return somarOS ? { ordensServicos, totaisOs } : { ordensServicos };
+        return {
+          ...dataValues,
+          mecanico: { ...mecanico.dataValues },
+          servicos: [...servicos.map((model: any) => model.dataValues)],
+          cliente: { ...cliente.dataValues },
+          totalOs,
+          totalMecanico: Number(totalOs) / 2,
+        };
+      }
+    );
+
+    return { ordensServicos };
   }
 
-  async getAll(user: string, mecanicoId?: number, clienteId?: number) {
+  async getAll({
+    user,
+    clienteId,
+    includeTotais,
+    mecanicoId,
+    dtFim,
+    dtInicio,
+  }: {
+    user: string;
+    mecanicoId?: number;
+    clienteId?: number;
+    includeTotais?: boolean;
+    dtInicio?: string;
+    dtFim?: string;
+  }) {
     try {
       const condition: WhereOptions<InferAttributes<IOrdemServico>> = {
         mecanicoId,
         clienteId,
         usuario: user,
+        dataExecucao: {
+          [Op.and]: {
+            [Op.gte]: dtInicio,
+            [Op.lte]: dtFim,
+          },
+        },
       };
 
       if (!mecanicoId) delete condition.mecanicoId;
       if (!clienteId) delete condition.clienteId;
+      if (!dtInicio || !dtFim) delete condition.dataExecucao;
 
       const ordensServicos = await OrdemServicoModel.findAll({
         where: condition,
+        paranoid: true,
+
         order: [["dataExecucao", "desc"]],
         include: [
           {
@@ -78,12 +106,7 @@ export class OrdemServicoService extends Conection {
           { model: ClienteModel, required: true },
           {
             model: ServicoModel,
-            attributes: {
-              include: [
-                `${ServicoModel.getAttributes().servico.field}`,
-                `${ServicoModel.getAttributes().valor.field}`,
-              ],
-            },
+            required: true,
           },
         ],
       });
@@ -91,6 +114,8 @@ export class OrdemServicoService extends Conection {
       await this.closeConection();
 
       if (ordensServicos.length == 0) return ordensServicos;
+
+      if (includeTotais) return this.mapperGetAll(ordensServicos);
 
       return ordensServicos;
     } catch (error: any) {

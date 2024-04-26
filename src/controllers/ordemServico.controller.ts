@@ -8,15 +8,23 @@ import MyCipher from "../utils/crypto.util";
 export const OrdemServicoController = {
   async getAll(req: Request, res: Response) {
     try {
-      const { mecanicoId, clienteId } = req.query as {
-        mecanicoId: string;
-        clienteId: string;
-      };
-      const result = await new OrdemServicoService().getAll(
-        new MyCipher().myTokenAsUser(`${req.headers.authorization}`).user,
-        +mecanicoId,
-        +clienteId
-      );
+      const { mecanicoId, clienteId, includeTotais, dtFim, dtInicio } =
+        req.query as {
+          mecanicoId: string;
+          clienteId: string;
+          includeTotais: string;
+          dtFim: string;
+          dtInicio: string;
+        };
+
+      const result = await new OrdemServicoService().getAll({
+        user: new MyCipher().myTokenAsUser(`${req.headers.authorization}`).user,
+        mecanicoId: +mecanicoId,
+        clienteId: +clienteId,
+        includeTotais: includeTotais == "" || includeTotais == "true",
+        dtFim,
+        dtInicio,
+      });
 
       return res.send(sendBodyFormatter(result, "body"));
     } catch (error: any) {

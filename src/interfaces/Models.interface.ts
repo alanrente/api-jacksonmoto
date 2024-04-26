@@ -4,6 +4,7 @@ import {
   InferCreationAttributes,
   Model,
 } from "sequelize";
+import { IMecanico } from "./OrdemServico.interface";
 
 export interface Usuario {
   usuario?: string;
