@@ -2,7 +2,7 @@ import conexao from "../infra/database";
 import { ServicoModel } from "../models/servico.model";
 import { Conection } from "../interfaces/Conection.interface";
 import { IServico } from "../interfaces/OrdemServico.interface";
-import { Sequelize } from "sequelize";
+import { Sequelize, Transaction } from "sequelize";
 
 export class ServicoService extends Conection {
   private servicoModel: typeof ServicoModel;
@@ -21,10 +21,16 @@ export class ServicoService extends Conection {
     return categorias;
   }
 
-  async createMany(servicos: IServico[], usuario: string) {
+  async createMany({
+    servicos,
+    usuario,
+    transaction,
+  }: {
+    servicos: IServico[];
+    usuario: string;
+    transaction?: Transaction;
+  }) {
     if (servicos.length == 0) return servicos;
-
-    const transaction = await this.conection.transaction();
 
     const mapServicosWithoutId = servicos.map(({ servico, valor }) => ({
       servico,

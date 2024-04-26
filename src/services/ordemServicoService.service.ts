@@ -292,8 +292,11 @@ export class OrdemServicoService extends Conection {
 
       if (servicosNotFinded.length > 0) {
         servicosNotFinded = await new ServicoService(this.conection).createMany(
-          servicosNotFinded,
-          usuario!
+          {
+            servicos: servicosNotFinded,
+            usuario: usuario!,
+            transaction: transacao,
+          }
         );
       }
 
