@@ -118,7 +118,6 @@ export class OrdemServicoService extends Conection {
           { model: ClienteModel, required: true },
           {
             model: ServicoModel,
-            required: true,
             attributes: {
               include: [
                 [
