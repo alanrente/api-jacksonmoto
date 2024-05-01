@@ -39,25 +39,27 @@ export class OrdemServicoService extends Conection {
   private mapperGetAll(ordemServico: any[]) {
     const ordensServicos: any = ordemServico.map(
       ({ dataValues, servicos, mecanico, cliente }) => {
-        const totalOs =
-          servicos.length > 1
-            ? servicos
-                .map((servico: IServicoModel) =>
-                  Number(servico.dataValues.valor)
-                )
-                .reduce((a: number, b: number) => {
-                  return a + b;
-                })
-            : Number(servicos[0].valor);
+        let totalOs = 0,
+          totalMecanico = 0;
 
-        const totalMecanico =
-          servicos.length > 1
-            ? servicos
-                .map((servico: IServicoModel) =>
-                  Number(servico.dataValues.valorPorcentagem)
-                )
-                .reduce((a: number, b: number) => a + b)
-            : Number(servicos[0].valorPorcentagem);
+        if (servicos.length > 1) {
+          totalOs = servicos
+            .map((servico: IServicoModel) => Number(servico.dataValues.valor))
+            .reduce((a: number, b: number) => {
+              return a + b;
+            });
+
+          totalMecanico = servicos
+            .map((servico: IServicoModel) =>
+              Number(servico.dataValues.valorPorcentagem)
+            )
+            .reduce((a: number, b: number) => a + b);
+        }
+
+        if (servicos.length === 1) {
+          totalOs = Number(servicos[0].dataValues.valor);
+          totalMecanico = Number(servicos[0].dataValues.valorPorcentagem);
+        }
 
         return {
           ...dataValues,
