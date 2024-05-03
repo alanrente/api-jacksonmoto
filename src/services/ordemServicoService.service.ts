@@ -72,7 +72,7 @@ export class OrdemServicoService extends Conection {
       }
     );
 
-    return { ordensServicos };
+    return ordensServicos;
   }
 
   async getAll({
@@ -216,7 +216,7 @@ export class OrdemServicoService extends Conection {
       ? transaction
       : await this.conection.transaction();
     try {
-      const dataExecucao = moment().format("YYYY-MM-25");
+      const dataExecucao = moment().format("YYYY-MM-DD");
       const ordemServicoCriada = await OrdemServicoModel.create(
         {
           dataExecucao,
