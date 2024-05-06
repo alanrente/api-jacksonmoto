@@ -36,7 +36,7 @@ export class OrdemServicoService extends Conection {
     super(conexao());
   }
 
-  private mapperGetAll(ordemServico: any[]) {
+  private mapperGetAll(ordemServico: any[]): any[] {
     const ordensServicos: any = ordemServico.map(
       ({ dataValues, servicos, mecanico, cliente }) => {
         let totalOs = 0,
@@ -134,9 +134,49 @@ export class OrdemServicoService extends Conection {
 
       await this.closeConection();
 
-      if (ordensServicos.length == 0) return ordensServicos;
+      if (ordensServicos.length == 0) {
+        return { ordensServicos };
+      }
 
-      if (includeTotais) return this.mapperGetAll(ordensServicos);
+      if (includeTotais) {
+        const ordensComTotais = this.mapperGetAll(ordensServicos);
+        const mapTotais = ordensComTotais.map(({ totalOs, totalMecanico }) => ({
+          totalOs: Number(totalOs),
+          totalMecanico: Number(totalMecanico),
+        }));
+
+        let somaTotalOs: {
+          totalOs: number;
+          totalMecanico: number;
+        } = {
+          totalOs: 0,
+          totalMecanico: 0,
+        };
+
+        if (mapTotais.length > 1) {
+          somaTotalOs = mapTotais.reduce((a, b) => {
+            const totalOs = a.totalOs + b.totalOs;
+            const totalMecanico = a.totalMecanico + b.totalMecanico;
+            return { totalOs, totalMecanico };
+          });
+        }
+
+        if (mapTotais.length === 1) {
+          somaTotalOs = {
+            totalOs: mapTotais[0].totalOs,
+            totalMecanico: mapTotais[0].totalMecanico,
+          };
+        }
+
+        return {
+          totalOrdens: ordensComTotais.length,
+          totalServicos: ordensComTotais
+            .map((ordem) => ordem.servicos.length)
+            .reduce((a, b) => a + b),
+          ...somaTotalOs,
+          ordensServicos: ordensComTotais,
+        };
+      }
 
       return ordensServicos;
     } catch (error: any) {
