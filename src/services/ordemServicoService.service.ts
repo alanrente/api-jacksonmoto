@@ -178,7 +178,7 @@ export class OrdemServicoService extends Conection {
         };
       }
 
-      return ordensServicos;
+      return { ordensServicos };
     } catch (error: any) {
       throw new Error(error);
     }
