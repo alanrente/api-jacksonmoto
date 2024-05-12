@@ -29,6 +29,7 @@ export interface IOrdemServico
   dataExecucao: string;
   mecanicoId: number;
   clienteId?: number;
+  status?: number;
 }
 export interface ICliente
   extends Model<InferAttributes<ICliente>, InferCreationAttributes<ICliente>>,

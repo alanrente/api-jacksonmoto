@@ -65,4 +65,21 @@ export const OrdemServicoController = {
       res.status(500).send(sendBodyFormatter(error.message));
     }
   },
+
+  async closeOrReopen(req: Request, res: Response) {
+    try {
+      const { status } = req.body as { status: number };
+      const { id } = req.params as { id: string };
+
+      const osService = new OrdemServicoService();
+
+      await osService.closeOrReopenOS({ idOs: +id, status });
+
+      const msgCloseOrReopenOS = [`OS: ${id} fechada!`, `OS: ${id} reaberta!`];
+
+      res.send(sendBodyFormatter(msgCloseOrReopenOS[status]));
+    } catch (error: any) {
+      res.status(500).send(sendBodyFormatter(error.message));
+    }
+  },
 };
