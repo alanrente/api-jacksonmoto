@@ -27,6 +27,10 @@ const OrdemServicoModel = sequelize.define<IOrdemServico>(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    status: {
+      type: DataTypes.TINYINT,
+      defaultValue: 1,
+    },
   },
   {
     tableName: "ORDEM_SERVICO_TB",

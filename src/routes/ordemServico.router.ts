@@ -12,5 +12,6 @@ ordemServicoRouter.post(
   "/adicionar-servicos-os",
   OrdemServicoController.addServicosInOs
 );
+ordemServicoRouter.patch("/:id/", OrdemServicoController.closeOrReopen);
 
 export default ordemServicoRouter;

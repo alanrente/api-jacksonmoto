@@ -364,4 +364,15 @@ export class OrdemServicoService extends Conection {
       throw error;
     }
   }
+
+  async closeOrReopenOS({ idOs, status }: { idOs: number; status: number }) {
+    try {
+      await OrdemServicoModel.update(
+        { status },
+        { where: { idOrdemServico: idOs } }
+      );
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }
