@@ -75,6 +75,34 @@ export class OrdemServicoService extends Conection {
     return ordensServicos;
   }
 
+  private async allOrdemServicos(
+    condition?: WhereOptions<InferAttributes<IOrdemServico>>
+  ) {
+    return await OrdemServicoModel.findAll({
+      where: condition,
+
+      order: [["dataExecucao", "desc"]],
+      include: [
+        {
+          model: MecanicoModel,
+          required: true,
+        },
+        { model: ClienteModel, required: true },
+        {
+          model: ServicoModel,
+          attributes: {
+            include: [
+              [
+                this.conection.literal("(valor * porcentagem)"),
+                "valorPorcentagem",
+              ],
+            ],
+          },
+        },
+      ],
+    });
+  }
+
   async getAll({
     user,
     clienteId,
@@ -107,36 +135,9 @@ export class OrdemServicoService extends Conection {
       if (!clienteId) delete condition.clienteId;
       if (!dtInicio || !dtFim) delete condition.dataExecucao;
 
-      const ordensServicos = await OrdemServicoModel.findAll({
-        where: condition,
-        paranoid: true,
-
-        order: [["dataExecucao", "desc"]],
-        include: [
-          {
-            model: MecanicoModel,
-            required: true,
-          },
-          { model: ClienteModel, required: true },
-          {
-            model: ServicoModel,
-            attributes: {
-              include: [
-                [
-                  this.conection.literal("(valor * porcentagem)"),
-                  "valorPorcentagem",
-                ],
-              ],
-            },
-          },
-        ],
-      });
+      const ordensServicos = await this.allOrdemServicos(condition);
 
       await this.closeConection();
-
-      if (ordensServicos.length == 0) {
-        return { ordensServicos };
-      }
 
       if (includeTotais) {
         const ordensComTotais = this.mapperGetAll(ordensServicos);
@@ -371,6 +372,16 @@ export class OrdemServicoService extends Conection {
         { status },
         { where: { idOrdemServico: idOs } }
       );
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  async getAllAbertos() {
+    try {
+      const ordens = await this.allOrdemServicos({ status: 1 });
+
+      return { ordensServicos: ordens };
     } catch (error: any) {
       throw new Error(error.message);
     }
