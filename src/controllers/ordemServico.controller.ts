@@ -82,4 +82,13 @@ export const OrdemServicoController = {
       res.status(500).send(sendBodyFormatter(error.message));
     }
   },
+
+  async getAllAbertos(req: Request, res: Response) {
+    try {
+      const abertos = await new OrdemServicoService().getAllAbertos();
+      res.send(sendBodyFormatter(abertos, "body"));
+    } catch (error: any) {
+      res.status(500).send(sendBodyFormatter(error.message));
+    }
+  },
 };
