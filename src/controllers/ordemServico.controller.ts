@@ -85,7 +85,10 @@ export const OrdemServicoController = {
 
   async getAllAbertos(req: Request, res: Response) {
     try {
-      const abertos = await new OrdemServicoService().getAllAbertos();
+      const user = new MyCipher().myTokenAsUser(
+        `${req.headers.authorization}`
+      ).user;
+      const abertos = await new OrdemServicoService().getAllAbertos(user);
       res.send(sendBodyFormatter(abertos, "body"));
     } catch (error: any) {
       res.status(500).send(sendBodyFormatter(error.message));
