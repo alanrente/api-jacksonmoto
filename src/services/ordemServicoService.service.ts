@@ -377,9 +377,9 @@ export class OrdemServicoService extends Conection {
     }
   }
 
-  async getAllAbertos() {
+  async getAllAbertos(user: string) {
     try {
-      const ordens = await this.allOrdemServicos({ status: 1 });
+      const ordens = await this.allOrdemServicos({ status: 1, usuario: user });
 
       return { ordensServicos: ordens };
     } catch (error: any) {
