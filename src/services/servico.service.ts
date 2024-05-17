@@ -1,8 +1,9 @@
 import conexao from "../infra/database";
 import { ServicoModel } from "../models/servico.model";
 import { Conection } from "../interfaces/Conection.interface";
-import { IServico } from "../interfaces/OrdemServico.interface";
+import { IServico, ZServico } from "../interfaces/OrdemServico.interface";
 import { Sequelize, Transaction } from "sequelize";
+import { z } from "zod";
 
 export class ServicoService extends Conection {
   private servicoModel: typeof ServicoModel;
@@ -42,5 +43,43 @@ export class ServicoService extends Conection {
       { transaction }
     );
     return servicosCreated;
+  }
+
+  async update({
+    idServico,
+    servico,
+  }: {
+    idServico: number;
+    servico: IServico;
+  }) {
+    const { success, data, error } = z
+      .number({ message: `parâmetro idServico = ${idServico} inválido` })
+      .safeParse(idServico);
+
+    const {
+      success: succS,
+      data: dataS,
+      error: errS,
+    } = ZServico.safeParse(servico);
+
+    if (!success) {
+      throw error.issues[0];
+    }
+
+    if (!succS || !dataS) {
+      throw errS.errors[0];
+    }
+
+    const servicoFinded = await this.servicoModel.findOne({
+      where: { idServico },
+    });
+
+    if (!servicoFinded) {
+      throw { message: `Servico id: ${idServico} não encontrado!` };
+    }
+
+    await servicoFinded.update({ ...servico });
+
+    return servicoFinded;
   }
 }

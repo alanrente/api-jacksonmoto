@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { Usuario } from "./Models.interface";
 
 export interface ServicosRelationOS {
@@ -12,13 +13,23 @@ export interface IOsServicoPost {
   user: string;
 }
 
-export interface IServico {
-  idServico?: number;
-  servico: string;
-  valor: number | string;
-  porcentagem?: number;
-  valorPorcentagem?: number;
-}
+// export interface IServico {
+//   idServico?: number;
+//   servico: string;
+//   valor: number | string;
+//   porcentagem?: number;
+//   valorPorcentagem?: number;
+// }
+
+export const ZServico = z.object({
+  idServico: z.number().min(0).optional(),
+  servico: z.string(),
+  valor: z.number(),
+  porcentagem: z.number().min(0).max(1).optional(),
+  valorPorcentagem: z.number().optional(),
+});
+
+export type IServico = z.infer<typeof ZServico>;
 
 export interface IMecanico {
   nome: string;
