@@ -6,6 +6,7 @@ import { OsServicosModel } from "../models/oSServicos.model";
 import { OrdemServicoModel } from "../models/ordemServico.model";
 import {
   IMecanico,
+  IOSIDServicoID,
   IOSMapper,
   IOsServicoPost,
   IServico,
@@ -363,6 +364,19 @@ export class OrdemServicoService extends Conection {
     } catch (error) {
       await transacao.rollback();
       throw error;
+    }
+  }
+
+  async removeServicoInOs({ OrdemServicoId, ServicoId }: IOSIDServicoID) {
+    try {
+      await OsServicosModel.destroy({
+        where: {
+          ServicoId,
+          OrdemServicoId,
+        },
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
     }
   }
 

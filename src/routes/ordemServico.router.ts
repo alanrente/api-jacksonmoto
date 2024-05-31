@@ -13,6 +13,10 @@ ordemServicoRouter.post(
   "/adicionar-servicos-os",
   OrdemServicoController.addServicosInOs
 );
+ordemServicoRouter.delete(
+  "/deletar-servico-os",
+  OrdemServicoController.removeServicoOS
+);
 ordemServicoRouter.patch("/:id/", OrdemServicoController.closeOrReopen);
 
 export default ordemServicoRouter;
