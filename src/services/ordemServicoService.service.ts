@@ -139,7 +139,7 @@ export class OrdemServicoService extends Conection {
 
       await this.closeConection();
 
-      if (includeTotais) {
+      if (includeTotais && ordensServicos.length > 0) {
         const ordensComTotais = this.mapperGetAll(ordensServicos);
         const mapTotais = ordensComTotais.map(({ totalOs, totalMecanico }) => ({
           totalOs: Number(totalOs),
