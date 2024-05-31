@@ -31,6 +31,13 @@ export const ZServico = z.object({
 
 export type IServico = z.infer<typeof ZServico>;
 
+export const ZOSIDServicoID = z.object({
+  OrdemServicoId: z.number(),
+  ServicoId: z.number(),
+});
+
+export type IOSIDServicoID = z.infer<typeof ZOSIDServicoID>;
+
 export interface IMecanico {
   nome: string;
 }

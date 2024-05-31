@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import sendBodyFormatter from "../utils/sendBodyFormatter";
 import { OrdemServicoService } from "../services/ordemServicoService.service";
-import { IServico } from "../interfaces/OrdemServico.interface";
+import { IOSIDServicoID, IServico } from "../interfaces/OrdemServico.interface";
 import { ICliente } from "../interfaces/Models.interface";
 import MyCipher from "../utils/crypto.util";
 
@@ -61,6 +61,23 @@ export const OrdemServicoController = {
 
       await new OrdemServicoService().addServicosInOs(req.body);
       res.send();
+    } catch (error: any) {
+      res.status(500).send(sendBodyFormatter(error.message));
+    }
+  },
+
+  async removeServicoOS(req: Request, res: Response) {
+    try {
+      const { OrdemServicoId, ServicoId } = req.body as IOSIDServicoID;
+      await new OrdemServicoService().removeServicoInOs({
+        OrdemServicoId,
+        ServicoId,
+      });
+      res.send(
+        sendBodyFormatter(
+          `Servico ${ServicoId} removido da OS ${OrdemServicoId}!`
+        )
+      );
     } catch (error: any) {
       res.status(500).send(sendBodyFormatter(error.message));
     }
