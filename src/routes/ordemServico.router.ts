@@ -14,7 +14,7 @@ ordemServicoRouter.post(
   OrdemServicoController.addServicosInOs
 );
 ordemServicoRouter.delete(
-  "/deletar-servico-os",
+  "/deletar-servico-os/:idOsServicos",
   OrdemServicoController.removeServicoOS
 );
 ordemServicoRouter.patch("/:id/", OrdemServicoController.closeOrReopen);

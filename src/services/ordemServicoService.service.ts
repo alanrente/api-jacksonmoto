@@ -411,12 +411,11 @@ export class OrdemServicoService extends Conection {
     }
   }
 
-  async removeServicoInOs({ OrdemServicoId, ServicoId }: IOSIDServicoID) {
+  async removeServicoInOs(idOsServicos: number) {
     try {
-      await OsServicosModel.destroy({
+      return await OsServicosModel.destroy({
         where: {
-          ServicoId,
-          OrdemServicoId,
+          idOsServicos,
         },
       });
     } catch (error: any) {

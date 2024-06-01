@@ -68,16 +68,25 @@ export const OrdemServicoController = {
 
   async removeServicoOS(req: Request, res: Response) {
     try {
-      const { OrdemServicoId, ServicoId } = req.body as IOSIDServicoID;
-      await new OrdemServicoService().removeServicoInOs({
-        OrdemServicoId,
-        ServicoId,
-      });
-      res.send(
-        sendBodyFormatter(
-          `Servico ${ServicoId} removido da OS ${OrdemServicoId}!`
-        )
+      const { idOsServicos } = req.params as { idOsServicos: string };
+
+      if (isNaN(Number(idOsServicos))) {
+        return res
+          .status(400)
+          .send(sendBodyFormatter("Parâmetro deve ser um número"));
+      }
+
+      const rowsDeleted = await new OrdemServicoService().removeServicoInOs(
+        Number(idOsServicos)
       );
+
+      if (rowsDeleted < 1) {
+        return res
+          .status(404)
+          .send(sendBodyFormatter("Nenhum serviço removido!"));
+      }
+
+      res.send(sendBodyFormatter(`OsServico ${idOsServicos} removido!`));
     } catch (error: any) {
       res.status(500).send(sendBodyFormatter(error.message));
     }
