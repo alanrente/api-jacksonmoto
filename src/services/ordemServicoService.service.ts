@@ -15,6 +15,7 @@ import {
 } from "../interfaces/OrdemServico.interface";
 import { ServicoModel } from "../models/servico.model";
 import {
+  HasOne,
   IncludeOptions,
   Includeable,
   InferAttributes,
@@ -27,6 +28,7 @@ import {
   ICliente,
   IMecanicoModel,
   IOrdemServico,
+  IOsServicos,
   IServicoModel,
 } from "../interfaces/Models.interface";
 import { ClienteModel } from "../models/cliente.model";
@@ -39,33 +41,35 @@ export class OrdemServicoService extends Conection {
 
   private mapperGetAll(ordemServico: any[]): any[] {
     const ordensServicos: any = ordemServico.map(
-      ({ dataValues, servicos, mecanico, cliente }) => {
+      ({ servicos, mecanico, cliente, ...dataValues }) => {
         let totalOs = 0,
           totalMecanico = 0;
 
         if (servicos.length > 1) {
           totalOs = servicos
-            .map((servico: IServicoModel) => Number(servico.dataValues.valor))
+            .map((servico: IServicoModel & { osServico: any }) =>
+              Number(servico.osServico.valor)
+            )
             .reduce((a: number, b: number) => {
               return a + b;
             });
 
           totalMecanico = servicos
-            .map((servico: IServicoModel) =>
-              Number(servico.dataValues.valorPorcentagem)
+            .map((servico: IServicoModel & { osServico: any }) =>
+              Number(servico.osServico.valorPorcentagem)
             )
             .reduce((a: number, b: number) => a + b);
         }
 
         if (servicos.length === 1) {
-          totalOs = Number(servicos[0].dataValues.valor);
-          totalMecanico = Number(servicos[0].dataValues.valorPorcentagem);
+          totalOs = Number(servicos[0].valor);
+          totalMecanico = Number(servicos[0].osServico.valorPorcentagem);
         }
 
         return {
           ...dataValues,
           mecanico: { ...mecanico.dataValues },
-          servicos: [...servicos.map((model: any) => model.dataValues)],
+          servicos,
           cliente: { ...cliente.dataValues },
           totalOs,
           totalMecanico,
@@ -79,9 +83,17 @@ export class OrdemServicoService extends Conection {
   private async allOrdemServicos(
     condition?: WhereOptions<InferAttributes<IOrdemServico>>
   ) {
-    return await OrdemServicoModel.findAll({
+    const ordens = await OrdemServicoModel.findAll({
       where: condition,
-
+      subQuery: false,
+      attributes: {
+        exclude: [
+          `${OrdemServicoModel.getAttributes().clienteId?.field}`,
+          `${OrdemServicoModel.getAttributes().mecanicoId.field}`,
+          `${OrdemServicoModel.getAttributes().createdAt?.field}`,
+          `${OrdemServicoModel.getAttributes().updatedAt?.field}`,
+        ],
+      },
       order: [["dataExecucao", "desc"]],
       include: [
         {
@@ -91,17 +103,49 @@ export class OrdemServicoService extends Conection {
         { model: ClienteModel, required: true },
         {
           model: ServicoModel,
-          attributes: {
-            include: [
-              [
-                this.conection.literal("(valor * porcentagem)"),
-                "valorPorcentagem",
-              ],
-            ],
-          },
         },
       ],
     });
+
+    const servicos = await OsServicosModel.findAll({
+      where: {
+        OrdemServicoId: { [Op.in]: ordens.map((os) => os.idOrdemServico) },
+      },
+      attributes: {
+        include: [
+          [
+            this.conection.literal(
+              `("osServico".valor_servico * servico.porcentagem)`
+            ),
+            "valorPorcentagem",
+          ],
+        ],
+      },
+      include: [
+        {
+          model: ServicoModel,
+          required: true,
+          association: new HasOne(OsServicosModel, ServicoModel, {
+            foreignKey: "idServico",
+            sourceKey: "ServicoId",
+          }),
+        },
+      ],
+    });
+
+    const ordensWIthAllServicos = ordens.map((o) => {
+      const servicosOrdem = servicos
+        .filter((s) => s.OrdemServicoId === o.idOrdemServico)
+        .map((s: any) => {
+          const { servico: serv, ...another } = s;
+          const { servico, ...osServico } = another.dataValues;
+          return { ...serv.dataValues, osServico };
+        });
+
+      return { ...o.dataValues, servicos: servicosOrdem };
+    });
+
+    return ordensWIthAllServicos;
   }
 
   async getAll({
