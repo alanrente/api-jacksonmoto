@@ -4,7 +4,7 @@ import {
   InferCreationAttributes,
   Model,
 } from "sequelize";
-import { IMecanico } from "./OrdemServico.interface";
+import { IMecanico, IServico } from "./OrdemServico.interface";
 
 export interface Usuario {
   usuario?: string;
@@ -30,6 +30,8 @@ export interface IOrdemServico
   mecanicoId: number;
   clienteId?: number;
   status?: number;
+  createdAt?: CreationOptional<Date>;
+  updatedAt?: CreationOptional<Date>;
 }
 export interface ICliente
   extends Model<InferAttributes<ICliente>, InferCreationAttributes<ICliente>>,
@@ -47,6 +49,7 @@ export interface IOsServicos
       InferCreationAttributes<IOsServicos>
     >,
     Usuario {
+  idOsServicos?: number;
   ServicoId: number;
   OrdemServicoId: number;
   valor?: number;

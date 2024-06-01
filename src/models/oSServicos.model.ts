@@ -7,6 +7,12 @@ import { IOsServicos } from "../interfaces/Models.interface";
 const OsServicosModel = database().define<IOsServicos>(
   "osServico",
   {
+    idOsServicos: {
+      type: DataTypes.INTEGER,
+      field: "id_os_servicos",
+      autoIncrement: true,
+      primaryKey: true,
+    },
     ServicoId: {
       type: DataTypes.INTEGER,
       field: "servico_id",
