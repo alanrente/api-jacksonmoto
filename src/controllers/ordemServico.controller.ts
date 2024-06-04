@@ -3,7 +3,7 @@ import sendBodyFormatter from "../utils/sendBodyFormatter";
 import { OrdemServicoService } from "../services/ordemServicoService.service";
 import { IOSIDServicoID, IServico } from "../interfaces/OrdemServico.interface";
 import { ICliente } from "../interfaces/Models.interface";
-import MyCipher from "../utils/crypto.util";
+import MyCipher from "../services/crypto.service";
 
 export const OrdemServicoController = {
   async getAll(req: Request, res: Response) {

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import sendBodyFormatter from "../utils/sendBodyFormatter";
-import MyCipher from "../utils/crypto.util";
+import MyCipher from "../services/crypto.service";
 
 const middleCheckAuth = async (
   req: Request,

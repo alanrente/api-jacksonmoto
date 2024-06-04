@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ClienteService } from "../services/cliente.service";
 import sendBodyFormatter from "../utils/sendBodyFormatter";
-import MyCipher from "../utils/crypto.util";
+import MyCipher from "../services/crypto.service";
 
 export const ClienteController = {
   async getAll(req: Request, res: Response) {

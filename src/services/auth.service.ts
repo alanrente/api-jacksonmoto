@@ -5,7 +5,7 @@ import { Conection } from "../interfaces/Conection.interface";
 
 import Sequelize from "sequelize";
 import { User } from "../interfaces/Auth.interface";
-import MyCipher from "../utils/crypto.util";
+import MyCipher from "./crypto.service";
 
 export class AuthService extends Conection {
   constructor() {
