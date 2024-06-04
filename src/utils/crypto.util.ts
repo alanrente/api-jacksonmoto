@@ -15,12 +15,18 @@ export default class MyCipher {
 
   decrypt(value: string) {
     const decrypt = AES.decrypt(value, this.keyPrivate);
+
     return decrypt.toString(enc.Utf8);
   }
 
   myJsonDecrypt(value: string) {
-    const decrypt = this.decrypt(value);
-    return JSON.parse(decrypt);
+    try {
+      const decrypt = JSON.parse(this.decrypt(value));
+
+      return decrypt;
+    } catch (err) {
+      throw new Error("token inválido!");
+    }
   }
 
   myTokenAsUser(value: string) {
