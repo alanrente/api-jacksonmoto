@@ -1,9 +1,10 @@
 import { DataTypes } from "sequelize";
 import database from "../infra/database";
-import { IMecanicoModel } from "../interfaces/Models.interface";
+import { IMec } from "../interfaces/Mecanico.interface";
+
 const sequelize = database();
 
-const MecanicoModel = sequelize.define<IMecanicoModel>(
+const MecanicoModel = sequelize.define<IMec>(
   "mecanico",
   {
     idMecanico: {
@@ -18,6 +19,15 @@ const MecanicoModel = sequelize.define<IMecanicoModel>(
     usuario: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    status: {
+      type: DataTypes.INTEGER({ precision: 4 }),
+      allowNull: false,
+      defaultValue: 1,
+    },
+    codigo: {
+      type: DataTypes.CHAR(6),
+      unique: true,
     },
   },
   {

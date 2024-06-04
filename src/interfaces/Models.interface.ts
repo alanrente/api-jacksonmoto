@@ -4,7 +4,6 @@ import {
   InferCreationAttributes,
   Model,
 } from "sequelize";
-import { IMecanico, IServico } from "./OrdemServico.interface";
 
 export interface Usuario {
   usuario?: string;
@@ -66,14 +65,4 @@ export interface IServicoModel
   valor: number;
   porcentagem?: CreationOptional<number>;
   valorPorcentagem?: number;
-}
-
-export interface IMecanicoModel
-  extends Model<
-      InferAttributes<IMecanicoModel>,
-      InferCreationAttributes<IMecanicoModel>
-    >,
-    Usuario {
-  idMecanico: CreationOptional<number>;
-  nome: string;
 }

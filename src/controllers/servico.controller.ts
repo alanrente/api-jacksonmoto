@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import sendBodyFormatter from "../utils/sendBodyFormatter";
 import { ServicoService } from "../services/servico.service";
-import MyCipher from "../utils/crypto.util";
+import MyCipher from "../services/crypto.service";
 import { IServico } from "../interfaces/OrdemServico.interface";
 
 export class ServicoController {

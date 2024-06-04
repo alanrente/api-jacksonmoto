@@ -5,9 +5,6 @@ import { MecanicoModel } from "../models/mecanico.model";
 import { OsServicosModel } from "../models/oSServicos.model";
 import { OrdemServicoModel } from "../models/ordemServico.model";
 import {
-  IMecanico,
-  IOSIDServicoID,
-  IOSMapper,
   IOsServicoPost,
   IServico,
   ServicosAddOs,
@@ -26,17 +23,20 @@ import {
 } from "sequelize";
 import {
   ICliente,
-  IMecanicoModel,
   IOrdemServico,
-  IOsServicos,
   IServicoModel,
 } from "../interfaces/Models.interface";
 import { ClienteModel } from "../models/cliente.model";
 import { ServicoService } from "./servico.service";
+import { MecanicoService } from "./mecanico.service";
 
 export class OrdemServicoService extends Conection {
-  constructor() {
-    super(conexao());
+  private mecanicoService: MecanicoService;
+  constructor(anotherConection?: Sequelize) {
+    const conection = anotherConection ? anotherConection : conexao();
+    super(conection);
+
+    this.mecanicoService = new MecanicoService(conection);
   }
 
   private mapperGetAll(ordemServico: any[]): any[] {
@@ -246,10 +246,13 @@ export class OrdemServicoService extends Conection {
       const idsMecanicoAndServicos = {} as IOsServicoPost;
       idsMecanicoAndServicos.user = user;
 
-      const [findOrCreateMecanicoByName] = await MecanicoModel.findCreateFind({
-        where: { nome: mecanico, usuario: user },
-        transaction: transacao,
-      });
+      const findOrCreateMecanicoByName =
+        await this.mecanicoService.findOrCreateMecanicoByName({
+          nome: mecanico,
+          usuario: user,
+          transaction: transacao,
+        });
+
       idsMecanicoAndServicos.mecanicoId = findOrCreateMecanicoByName.idMecanico;
 
       const { contato, nome, placa } = cliente;
